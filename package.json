@@ -18,10 +18,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "pretypeorm": "(rm ormconfig.json || :) && ts-node -r tsconfig-paths/register src/scripts/write-type-orm-config.ts",
-    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
-    "typeorm:migration:generate": "npm run typeorm -- migration:generate -n",
-    "typeorm:migration:run": "npm run typeorm -- migration:run"
+    "typeorm:cli": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli -f ./ormconfig-migrations.ts",
+    "migration-generate": "npm run typeorm:cli -- migration:generate -n",
+    "migration-run": "npm run typeorm:cli -- migration:run"
   },
   "dependencies": {
     "@nestjs/common": "^7.6.13",
@@ -30,6 +29,7 @@
     "@nestjs/platform-express": "^7.6.13",
     "@nestjs/typeorm": "^7.1.5",
     "apollo-server-express": "^2.21.0",
+    "bcrypt": "^5.0.1",
     "class-validator": "^0.13.1",
     "dotenv": "^8.2.0",
     "graphql": "^15.5.0",

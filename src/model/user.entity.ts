@@ -1,6 +1,16 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+  OneToMany
+} from 'typeorm';
+import * as bcrypt from 'bcrypt';
+import { Todo } from './todo.entity';
 
-@Entity()
+@Entity('user')
 export class User {
 
   @PrimaryGeneratedColumn('uuid')
@@ -12,7 +22,7 @@ export class User {
   @Column()
   password: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Column({ type: 'boolean', default: true })
@@ -23,5 +33,14 @@ export class User {
 
   @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   lastChangedDateTime: Date;
+
+  @OneToMany(type => Todo, todo => todo.user)
+  todos: Todo[];
+
+  @BeforeInsert()
+  async hashPassword() {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+
 
 }

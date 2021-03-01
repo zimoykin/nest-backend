@@ -1,10 +1,25 @@
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { User } from "src/model/user.entity"
 
-export class UserDto {
-    @IsNotEmpty()
+export interface UserInputDto {
     username: string;
-    @IsEmail()
     email: string;
-    @IsNotEmpty()
     password: string;
 }
+
+export interface UserOutputDto {
+  username: string;
+  email: string;
+  id: string;
+  todos: number;
+}
+
+export interface UserSearchDto {
+  username?: string;
+  email?: string;
+}
+
+// export const userOutput = ( user: User ) : UserOutputDto => {
+//   let user_dto: UserOutputDto = user
+//   //username: user.username, email: user.email, id: user.id
+//   return user_dto
+// }

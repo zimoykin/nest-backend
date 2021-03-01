@@ -34,7 +34,10 @@ export class User {
   @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   lastChangedDateTime: Date;
 
-  @OneToMany(type => Todo, todo => todo.user)
+  @OneToMany( 
+    type => Todo, 
+    todo => todo.user,
+    { cascade: true })
   todos: Todo[];
 
   @BeforeInsert()

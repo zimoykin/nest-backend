@@ -22,7 +22,10 @@ export class Todo {
   @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   lastChangedDateTime: Date;
 
-  @OneToMany(type => User, user => user.todos)
+  @ManyToOne(
+    type => User, 
+    user => user.todos,
+    { cascade: true })
   user: User;
 
 }

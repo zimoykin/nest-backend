@@ -24,8 +24,8 @@ export class Todo {
 
   @ManyToOne(
     type => User, 
-    user => user.todos,
-    { cascade: true })
+    user => user.todos
+    )
   user: User;
 
 }

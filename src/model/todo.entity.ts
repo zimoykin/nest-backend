@@ -1,7 +1,7 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { User } from './user.entity';
 
-@Entity()
+@Entity('todo')
 export class Todo {
 
   @PrimaryGeneratedColumn('uuid')
@@ -14,7 +14,7 @@ export class Todo {
   descr: string;
 
   @Column({ type: 'boolean', default: true })
-  IsDone: boolean;
+  isDone: boolean;
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   createDateTime: Date;
@@ -22,10 +22,7 @@ export class Todo {
   @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   lastChangedDateTime: Date;
 
-  @ManyToOne(
-    type => User, 
-    user => user.todos
-    )
+  @ManyToOne(type => User, user => user.todos)
   user: User;
 
 }

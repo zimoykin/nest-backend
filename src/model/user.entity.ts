@@ -5,10 +5,11 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  OneToMany
+  OneToMany,
+  JoinColumn
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { Todo } from './todo.entity';
+import { Todo } from '../model/todo.entity';
 
 @Entity('user')
 export class User {
@@ -34,9 +35,7 @@ export class User {
   @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   lastChangedDateTime: Date;
 
-  @OneToMany( 
-    type => Todo, 
-    todo => todo.user,
+  @OneToMany( type => Todo, todo => todo.user,
     { cascade: true })
   todos: Todo[];
 

@@ -25,6 +25,10 @@ export interface UserAccess {
   refreshToken: string;
 }
 
+export interface UserRefreshToken {
+  refreshToken: string;
+}
+
 
 export const getAccess = (user: string): UserAccess => {
   const jwt_secret = process.env.JWTSECRET;

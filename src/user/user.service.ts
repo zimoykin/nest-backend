@@ -1,10 +1,21 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserAccess, UserInputDto, UserOutputDto, UserSearchDto } from 'src/dto/user.dto';
+import {
+  UserAccess,
+  UserInputDto,
+  UserOutputDto,
+  UserRefreshToken,
+  UserSearchDto,
+} from 'src/dto/user.dto';
 import { createQueryBuilder, Repository } from 'typeorm';
 import { User } from '../model/user.entity';
 import * as bcrypt from 'bcrypt';
-import { sign as jwt } from "jsonwebtoken";
+const jwt = require('jsonwebtoken');
 
 @Injectable()
 export class UsersService {
@@ -15,25 +26,37 @@ export class UsersService {
 
   async findAll(query?: UserSearchDto): Promise<User[]> {
     return createQueryBuilder(User, 'user')
-    .innerJoinAndSelect('user.todos', 'todo')
-    .where(query)
-    .orderBy('username')
-    .getMany();
+      .innerJoinAndSelect('user.todos', 'todo')
+      .where(query)
+      .orderBy('username')
+      .getMany();
   }
 
   findOne(id: string): Promise<User> {
     return this.usersRepository.findOne(id);
   }
 
-
   login(email: string, password: string): Promise<User> {
-      return this.usersRepository.findOne({ email: email }).then ( user => {
-       return bcrypt.compare(password, user.password).then( ismatch => {
-          if (ismatch) { return user }
-          else { throw new HttpException( Error('password incorrect'), HttpStatus.BAD_REQUEST ) }
-        })
-      })
+    return this.usersRepository.findOne({ email: email }).then((user) => {
+      return bcrypt.compare(password, user.password).then((ismatch) => {
+        if (ismatch) {
+          return user;
+        } else {
+          throw new HttpException(
+            Error('password incorrect'),
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      });
+    });
+  }
 
+  refresh(refresh: UserRefreshToken): Promise<User> {
+    return new Promise((resolve) => {
+      this.usersRepository.findOne(refresh).then((user) => {
+        resolve(user);
+      });
+    });
   }
 
   async createOne(userData: UserInputDto) {
@@ -52,7 +75,7 @@ export class UsersService {
     await this.usersRepository.delete(id);
   }
 
-  toOutput(user: User) : UserOutputDto {
+  toOutput(user: User): UserOutputDto {
     return {
       id: user.id,
       username: user.username,
@@ -61,13 +84,34 @@ export class UsersService {
     };
   }
 
-  toAccess(user: User) : UserAccess {
+   toAccess(user: User) : Promise<UserAccess> {
     const jwt_secret = process.env.JWTSECRET;
-    return {
+    const access: UserAccess = {
       id: user.id,
-      accessToken: jwt({ id: user.id }, jwt_secret, { expiresIn: "1h" }),
-      refreshToken: jwt({ id: user.id }, jwt_secret, { expiresIn: "24h" })
+      accessToken: jwt.sign({ id: user.id }, jwt_secret, { expiresIn: '1h' }),
+      refreshToken: jwt.sign({ id: user.id }, jwt_secret, { expiresIn: 2 * 60 }),
     };
+
+    return this.usersRepository.update( user.id, {refreshToken: access.refreshToken} )
+    .then ( (val) => {
+      return access
+    })
   }
 
+  async checkRefToken(ref: string): Promise<User> {
+    const jwt_secret = process.env.JWTSECRET;
+
+    return new Promise((resolve, reject) => {
+      jwt.verify(ref, jwt_secret, async (err, payload) => {
+        
+        if (err) {
+          reject(err);
+        }
+
+        let user = await this.usersRepository.findOne({ id: payload.id });
+        if (!user) reject('user not found');
+        resolve(user);
+      });
+    });
+  }
 }

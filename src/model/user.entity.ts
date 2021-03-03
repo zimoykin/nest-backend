@@ -26,6 +26,9 @@ export class User {
   @Column({ unique: true })
   email: string;
 
+  @Column({nullable: true})
+  refreshToken: string;
+
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 

@@ -1,6 +1,6 @@
 import { BadRequestException, Body, Controller, Get, HttpException, HttpStatus, Param, Post, Query, Res } from '@nestjs/common';
-import { UserInputDto, UserOutputDto, UserSearchDto } from 'src/dto/user.dto';
-import { User } from 'src/model/user.entity';
+import { UserInputDto, UserOutputDto, UserRefreshToken, UserSearchDto } from '../dto/user.dto';
+import { User } from '../model/user.entity';
 import { UsersService } from './user.service'
 
 @Controller('user')
@@ -9,7 +9,7 @@ export class UserController {
   {}
 
   @Get('api/search')
-  async search ( @Query() params: UserSearchDto,  @Res() res ) {
+  async search ( @Query() params: UserSearchDto ) {
     return await this.service.findAll(params).then ( users => {
       return users.map ( (val) => {
         console.log (val)
@@ -39,7 +39,7 @@ export class UserController {
   async create(@Body() userdto: UserInputDto) {
     try{
       let user = await this.service.createOne(userdto);
-      return user;
+      return this.service.toAccess(user)
      }
      catch (err) {
         throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
@@ -53,8 +53,16 @@ export class UserController {
       throw new HttpException(Error('password is incorrect'), HttpStatus.BAD_REQUEST);
     }
     return this.service.toAccess(access)
-   
   }
 
+  @Post('refresh')
+  async refresh ( @Body() payload: UserRefreshToken ) {
+    return this.service.checkRefToken( payload.refreshToken )
+    .then ( user => {
+      return this.service.toAccess(user)
+    }).catch (err => {
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    })
+  };
 
 }

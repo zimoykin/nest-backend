@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { User } from './user.entity';
 
 @Entity('todo')
@@ -23,6 +23,7 @@ export class Todo {
   lastChangedDateTime: Date;
 
   @ManyToOne(type => User, user => user.todos)
+  @JoinColumn({ name: "userId" })
   user: User;
 
 }

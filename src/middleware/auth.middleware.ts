@@ -9,23 +9,29 @@ export class AuthMiddleware implements NestMiddleware {
   constructor(  private service: UsersService  ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
+    const jwt_secret = process.env.JWTSECRET;
     const auth = req.headers.authorization;
     if (!auth) {
       res.sendStatus(401);
       return;
     } else {
-      let payload = jwt.decode(auth.replace('Bearer ', ''));
+      jwt.verify(auth.replace('Bearer ', ''), jwt_secret, async (err, payload) => {
 
-        if (Date.now() >= payload.exp * 1000) {
+        if (err) {
           res.statusCode = 401;
-          return res.json({ error: 'token is expired!' });
-        } else {
-            let user = await this.service.findOne(payload.id)
-            if (user.isActive) {
-                next();
-            }
+          return res.json(err);
         }
-      
+
+        let user = await this.service.findOne(payload.id)
+        if (user.isActive) {
+            (req as any).user = user
+            next();
+        } else {
+          res.sendStatus(401);
+          return res.json({ error: 'user isnt active!' });
+        }
+
+      })
     }
   }
 }

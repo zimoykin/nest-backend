@@ -1,15 +1,17 @@
+import { userInfo } from 'os';
 import { Outputable } from 'src/output/output.service';
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { Folder } from './folder.entity';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Todo } from './todo.entity';
 import { User } from './user.entity';
 
-@Entity('todo')
-export class Todo implements Outputable {
+@Entity('folder')
+export class Folder implements Outputable {
 
   output() : any {
     return { id: this.id, 
       title: this.title,
       descr: this.descr,
+      todos: this.todos.length || 0,
       user: this.user.output()
     }
   }
@@ -17,14 +19,11 @@ export class Todo implements Outputable {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({unique: true})
   title: string;
 
   @Column()
   descr: string;
-
-  @Column({ type: 'boolean', default: true })
-  isDone: boolean;
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   createDateTime: Date;
@@ -32,12 +31,11 @@ export class Todo implements Outputable {
   @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   lastChangedDateTime: Date;
 
-  @ManyToOne(type => User, user => user.todos)
+  @OneToMany(type => Todo, todo => todo.folder)
+  todos: Todo[];
+
+  @ManyToOne(type => User, user => user.folders)
   @JoinColumn({ name: "userId" })
   user: User;
-
-  @ManyToOne(type => Folder, folder => folder.todos)
-  @JoinColumn({ name: "folderId" })
-  folder: Folder;
 
 }

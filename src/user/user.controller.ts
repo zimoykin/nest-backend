@@ -12,8 +12,7 @@ export class UserController {
   async search ( @Query() params: UserSearchDto ) {
     return await this.service.findAll(params).then ( users => {
       return users.map ( (val) => {
-        console.log (val)
-        return this.service.toOutput( val )
+        return val.output()
       })
     })
   }
@@ -22,8 +21,7 @@ export class UserController {
   async getAll() {
     return this.service.findAll().then ( users => {
       return users.map ( (val) => {
-        console.log (val)
-        return this.service.toOutput( val )
+        return val.output()
       })
     })
   }

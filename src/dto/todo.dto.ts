@@ -1,3 +1,4 @@
+import { FolderOutputDto } from "./folder.dto";
 import { UserOutputDto } from "./user.dto";
 
 export interface TodoInputDto {
@@ -11,6 +12,7 @@ export interface TodoOutputDto {
     description: string;
     user: UserOutputDto;
     isDone: boolean;
+    folder: FolderOutputDto;
 }
 
 export interface TodoUpdateDto {

@@ -1,5 +1,8 @@
 import { User } from "../model/user.entity";
 import { sign as jwt } from "jsonwebtoken";
+import { FolderOutputDto } from "./folder.dto";
+import { Outputable } from "../output/output.service";
+
 
 export interface UserInputDto {
     username: string;
@@ -7,11 +10,11 @@ export interface UserInputDto {
     password: string;
 }
 
-export interface UserOutputDto {
-  username: string;
-  email: string;
-  id: string;
-  todos: number;
+export interface UserOutputDto extends Outputable {
+    username: string;
+    email: string;
+    id: string;
+    folder: FolderOutputDto[];
 }
 
 export interface UserSearchDto {

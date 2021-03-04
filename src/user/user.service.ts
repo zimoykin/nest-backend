@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   UserAccess,
@@ -11,10 +6,11 @@ import {
   UserOutputDto,
   UserRefreshToken,
   UserSearchDto,
-} from 'src/dto/user.dto';
+} from '../dto/user.dto';
 import { createQueryBuilder, Repository } from 'typeorm';
 import { User } from '../model/user.entity';
 import * as bcrypt from 'bcrypt';
+import { OutputService } from '../output/output.service';
 const jwt = require('jsonwebtoken');
 
 @Injectable()
@@ -26,7 +22,8 @@ export class UsersService {
 
   async findAll(query?: UserSearchDto): Promise<User[]> {
     return createQueryBuilder(User, 'user')
-      .innerJoinAndSelect('user.todos', 'todo')
+      .innerJoinAndSelect('user.folders', 'folders')
+      .innerJoinAndSelect('folders.todos', 'todos')
       .where(query)
       .orderBy('username')
       .getMany();
@@ -75,27 +72,23 @@ export class UsersService {
     await this.usersRepository.delete(id);
   }
 
-  toOutput(user: User): UserOutputDto {
-    return {
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      todos: user.todos != undefined ? user.todos.length : 0,
-    };
+  toOutput(user: User): any {
+    return user.output()
   }
 
-   toAccess(user: User) : Promise<UserAccess> {
+  toAccess(user: User): Promise<UserAccess> {
     const jwt_secret = process.env.JWTSECRET;
     const access: UserAccess = {
       id: user.id,
       accessToken: jwt.sign({ id: user.id }, jwt_secret, { expiresIn: '1h' }),
-      refreshToken: jwt.sign({ id: user.id }, jwt_secret, { expiresIn: 2 * 60 }),
+      refreshToken: jwt.sign({ id: user.id }, jwt_secret, { expiresIn: '72h' }),
     };
 
-    return this.usersRepository.update( user.id, {refreshToken: access.refreshToken} )
-    .then ( (val) => {
-      return access
-    })
+    return this.usersRepository
+      .update(user.id, { refreshToken: access.refreshToken })
+      .then((val) => {
+        return access;
+      });
   }
 
   async checkRefToken(ref: string): Promise<User> {
@@ -103,7 +96,6 @@ export class UsersService {
 
     return new Promise((resolve, reject) => {
       jwt.verify(ref, jwt_secret, async (err, payload) => {
-        
         if (err) {
           reject(err);
         }

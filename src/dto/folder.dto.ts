@@ -18,7 +18,7 @@ export interface FolderFullDto {
 
 export interface FolderOutputDto {
     id: string;
-    title?: string;
-    description?: string;
-    todos?: number;
+    title: string;
+    description: string;
+    todos: number;
 }

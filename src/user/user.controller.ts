@@ -10,7 +10,7 @@ export class UserController {
 
   @Get('api/search')
   async search ( @Query() params: UserSearchDto ) {
-    return await this.service.findAll(params).then ( users => {
+    return await this.service.readAll(params).then ( users => {
       return users.map ( (val) => {
         return val.output()
       })
@@ -19,30 +19,24 @@ export class UserController {
 
   @Get('')
   async getAll() {
-    return this.service.findAll().then ( users => {
-      return users.map ( (val) => {
-        return val.output()
-      })
-    })
+    return this.service.readAll({})
   }
 
   @Get(':id')
   async findOne( @Param('id') id: string) {
-      return this.service.findOne(id).then ( (user) => {
-        return this.service.toOutput(user)
-      })
+      return this.service.read({id: id})
   }
 
-  @Post()
-  async create(@Body() userdto: UserInputDto) {
-    try{
-      let user = await this.service.createOne(userdto);
-      return this.service.toAccess(user)
-     }
-     catch (err) {
-        throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
-     }
-  }
+  // @Post()
+  // async create(@Body() userdto: UserInputDto) {
+  //   try{
+  //     let user = await this.service.createOne(userdto);
+  //     return this.service.toAccess(user)
+  //    }
+  //    catch (err) {
+  //       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+  //    }
+  // }
 
   @Post('login')
   async login (@Body() userdto: UserInputDto) {
@@ -53,14 +47,14 @@ export class UserController {
     return this.service.toAccess(access)
   }
 
-  @Post('refresh')
-  async refresh ( @Body() payload: UserRefreshToken ) {
-    return this.service.checkRefToken( payload.refreshToken )
-    .then ( user => {
-      return this.service.toAccess(user)
-    }).catch (err => {
-      throw new HttpException(err, HttpStatus.BAD_REQUEST);
-    })
-  };
+  // @Post('refresh')
+  // async refresh ( @Body() payload: UserRefreshToken ) {
+  //   return this.service.checkRefToken( payload.refreshToken )
+  //   .then ( user => {
+  //     return this.service.toAccess(user)
+  //   }).catch (err => {
+  //     throw new HttpException(err, HttpStatus.BAD_REQUEST);
+  //   })
+  // };
 
 }

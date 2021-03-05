@@ -9,17 +9,7 @@ export class FolderController {
 
     @Get()
     async getAll( @Req() req, @Query() query ) {
-      return this.service.findAll( req.user, query ).then ( todos => {
-        return todos.map ( (val) => {
-          console.log (val)
-          return this.service.toOutput( val )
-        })
-      })
+      return this.service.readAll( {user: req.user} )
     }
 
-    @Post()
-    async create ( @Req() req, @Body() input: FolderDto ) {
-        let folder = await this.service.create(req.user, input)
-        return this.service.toOutput( folder )
-    }
 }

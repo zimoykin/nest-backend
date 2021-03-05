@@ -10,7 +10,7 @@ export interface UserInputDto {
     password: string;
 }
 
-export interface UserOutputDto extends Outputable {
+export interface UserOutputDto {
     username: string;
     email: string;
     id: string;

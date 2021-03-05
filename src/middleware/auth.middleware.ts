@@ -22,14 +22,20 @@ export class AuthMiddleware implements NestMiddleware {
           return res.json(err);
         }
 
-        let user = await this.service.findOne(payload.id)
-        if (user.isActive) {
+        let user = this.service.readRaw({id: payload.id}).then ( user => {
+          if (user.isActive) {
             (req as any).user = user
             next();
         } else {
           res.sendStatus(401);
           return res.json({ error: 'user isnt active!' });
         }
+        }).catch ( err => {
+          console.log (err)
+          res.sendStatus(401);
+          return;
+        })
+
 
       })
     }

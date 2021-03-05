@@ -12,25 +12,28 @@ import * as bcrypt from 'bcrypt';
 import { Todo } from '../model/todo.entity';
 import { Folder } from './folder.entity';
 import { Outputable } from 'src/output/output.service';
-import { title } from 'process';
+import { UserOutputDto } from 'src/dto/user.dto';
 
 @Entity('user')
-export class User implements Outputable {
-  output(): any {
-    return {
-      id: this.id,
-      username: this.username,
-      email: this.email,
-      folders: this.folders.map((val) => {
-        return {
-          id: val.id,
-          title: val.title,
-          todos: val.todos.map((todo) => {
-            return { id: todo.id, title: todo.title };
-          }),
-        };
-      }),
-    };
+export class User implements Outputable<UserOutputDto> {
+
+  static relations: string[] = ['todos', 'folders', 'folders.todos']
+
+  output (): any {
+    return new Promise( resolve => {
+      resolve({id: this.id,
+              username: this.username,
+              email: this.email,
+              folder: this.folders.map ( val => {
+                return {
+                  id: val.id,
+                  title: val.title,
+                  description: val.descr,
+                  todos: val.todos.length || 0
+                };
+              })
+      })
+    })
   }
 
   @PrimaryGeneratedColumn('uuid')

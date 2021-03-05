@@ -1,11 +1,14 @@
 import { userInfo } from 'os';
-import { Outputable } from 'src/output/output.service';
+import { Outputable } from '../output/output.service';
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Todo } from './todo.entity';
 import { User } from './user.entity';
+import { FolderOutputDto } from 'src/dto/folder.dto';
 
 @Entity('folder')
-export class Folder implements Outputable {
+export class Folder implements Outputable<FolderOutputDto>{
+
+  static relations = ['todos', 'user', 'user.todos', 'todos.user']
 
   output() : any {
     return { id: this.id, 

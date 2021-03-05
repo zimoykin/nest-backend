@@ -1,40 +1,23 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import {
   UserAccess,
-  UserInputDto,
-  UserOutputDto,
   UserRefreshToken,
   UserSearchDto,
 } from '../dto/user.dto';
-import { createQueryBuilder, Repository } from 'typeorm';
+import { createQueryBuilder } from 'typeorm';
 import { User } from '../model/user.entity';
 import * as bcrypt from 'bcrypt';
-import { OutputService } from '../output/output.service';
+import { ModelService } from '../output/output.service';
+
 const jwt = require('jsonwebtoken');
 
+
 @Injectable()
-export class UsersService {
-  constructor(
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
-  ) {}
-
-  async findAll(query?: UserSearchDto): Promise<User[]> {
-    return createQueryBuilder(User, 'user')
-      .innerJoinAndSelect('user.folders', 'folders')
-      .innerJoinAndSelect('folders.todos', 'todos')
-      .where(query)
-      .orderBy('username')
-      .getMany();
-  }
-
-  findOne(id: string): Promise<User> {
-    return this.usersRepository.findOne(id);
-  }
+export class UsersService extends ModelService(User, User.relations){
 
   login(email: string, password: string): Promise<User> {
-    return this.usersRepository.findOne({ email: email }).then((user) => {
+
+    return this.readRaw({ email: email }).then((user) => {
       return bcrypt.compare(password, user.password).then((ismatch) => {
         if (ismatch) {
           return user;
@@ -48,33 +31,29 @@ export class UsersService {
     });
   }
 
-  refresh(refresh: UserRefreshToken): Promise<User> {
+  refresh(refresh: UserRefreshToken) {
     return new Promise((resolve) => {
-      this.usersRepository.findOne(refresh).then((user) => {
+      this.read({refresh}).then((user) => {
         resolve(user);
       });
     });
   }
 
-  async createOne(userData: UserInputDto) {
-    let user = this.usersRepository.create({
-      isActive: true,
-      username: userData.username,
-      email: userData.email,
-      password: userData.password,
-    });
-    await this.usersRepository.save(user);
+  // async createOne(userData: UserInputDto) {
+  //   let user = this.usersRepository.create({
+  //     isActive: true,
+  //     username: userData.username,
+  //     email: userData.email,
+  //     password: userData.password,
+  //   });
+  //   await this.usersRepository.save(user);
 
-    return user;
-  }
+  //   return user;
+  // }
 
-  async remove(id: string): Promise<void> {
-    await this.usersRepository.delete(id);
-  }
-
-  toOutput(user: User): any {
-    return user.output()
-  }
+  // async remove(id: string): Promise<void> {
+  //   await this.usersRepository.delete(id);
+  // }
 
   toAccess(user: User): Promise<UserAccess> {
     const jwt_secret = process.env.JWTSECRET;
@@ -84,8 +63,7 @@ export class UsersService {
       refreshToken: jwt.sign({ id: user.id }, jwt_secret, { expiresIn: '72h' }),
     };
 
-    return this.usersRepository
-      .update(user.id, { refreshToken: access.refreshToken })
+    return this.update(user.id, { refreshToken: access.refreshToken })
       .then((val) => {
         return access;
       });
@@ -96,11 +74,8 @@ export class UsersService {
 
     return new Promise((resolve, reject) => {
       jwt.verify(ref, jwt_secret, async (err, payload) => {
-        if (err) {
-          reject(err);
-        }
-
-        let user = await this.usersRepository.findOne({ id: payload.id });
+        if (err) reject(err);
+        let user = await this.read({ id: payload.id });
         if (!user) reject('user not found');
         resolve(user);
       });

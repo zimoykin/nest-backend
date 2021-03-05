@@ -27,7 +27,7 @@ export function ModelService<T extends Outputable<T>>(entity: Constructor<T>, re
   class DataServiceHost implements ModelService<T> {
 
     @InjectRepository(entity) 
-    public repository: Repository<T>
+    public repository: Repository<T>;
 
     public async read(query: any): Promise<T> {
       return (await this.repository.findOne( {where: query, relations: relations} )).output()

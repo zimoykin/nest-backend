@@ -3,13 +3,13 @@ import { Model } from '../DefaultService/default.service';
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Todo } from './todo.entity';
 import { User } from './user.entity';
-import { FolderDto, FolderOutputDto } from 'src/dto/folder.dto';
+import { FolderDto, FolderOutputDto } from '../dto/folder.dto';
 
 @Entity('folder')
 export class Folder implements Model<FolderOutputDto, FolderDto>{
+
   hasOwner = true
   inputDTO: FolderDto;
-  outputDTO: FolderOutputDto;
 
   static relations = ['todos', 'user', 'user.todos', 'todos.user']
 

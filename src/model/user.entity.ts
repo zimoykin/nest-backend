@@ -5,14 +5,13 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  OneToMany,
-  JoinColumn
+  OneToMany
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Todo } from '../model/todo.entity';
 import { Folder } from './folder.entity';
-import { Model } from 'src/DefaultService/default.service';
-import { UserInputDto, UserOutputDto } from 'src/dto/user.dto';
+import { Model } from '../DefaultService/default.service';
+import { UserInputDto } from 'src/dto/user.dto';
 
 @Entity('user')
 export class User implements Model<User, UserInputDto> {

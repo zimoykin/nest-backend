@@ -35,6 +35,7 @@ export function DefaultController<T, R extends Createble>(entity: Constructor<T>
       return this.service.create(input, req.user)
     }
 
+
   }
 
   return ControllerHost;

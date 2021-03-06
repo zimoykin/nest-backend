@@ -1,7 +1,6 @@
 import { Body, Controller, Get, Inject, Param, Post, Put, Req } from '@nestjs/common';
 import { Createble, ModelService } from '../DefaultService/default.service';
 import { Type } from '@nestjs/common';
-import { UserInputDto } from '../dto/user.dto';
 
 export interface DefaultController<T,R extends Createble> {
   service: ModelService<T, R>
@@ -27,12 +26,12 @@ export function DefaultController<T, R extends Createble>(entity: Constructor<T>
     @Get() readAll(): Promise<T[]> {
         return this.service.readAll({});
     }
-    @Put(':id') update( @Param('id') id: string, @Body() input: any ): Promise<T> {
+    @Put(':id') update(@Param('id') id: string, @Body() input: any ): Promise<T> {
       return this.service.update(id, input).then ( val => {
         return this.service.read({id: id})
       })
     }
-    @Post() create ( @Body() input: R,  @Req() req): Promise<T> {
+    @Post() create (@Body() input: R,  @Req() req): Promise<T> {
       return this.service.create(input, req.user)
     }
 

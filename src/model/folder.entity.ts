@@ -17,7 +17,7 @@ export class Folder implements Model<FolderOutputDto, FolderDto>{
     return { id: this.id, 
       title: this.title,
       descr: this.descr,
-      todos: this.todos.length || 0,
+      todos: this.todos.map ( todo => { return todo.shortoutput() }),
       user: this.user.shortoutput()
     }
   }
@@ -26,7 +26,7 @@ export class Folder implements Model<FolderOutputDto, FolderDto>{
     return { id: this.id, 
       title: this.title,
       descr: this.descr,
-      todos: this.todos.map ( todo => { todo.shortoutput()}),
+      todos: this.todos.length || 0,
       user: this.user.shortoutput()
     }
   }

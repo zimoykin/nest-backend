@@ -19,7 +19,6 @@ export class User implements Model<User, UserInputDto> {
   
   hasOwner = false;
   inputDTO: UserInputDto;
-  outputDTO: UserInputDto;
 
   static relations: string[] = ['todos', 'folders', 'folders.todos'];
 

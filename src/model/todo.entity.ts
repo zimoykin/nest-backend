@@ -7,8 +7,8 @@ import { TodoInputDto, TodoOutputDto } from '../dto/todo.dto';
 @Entity('todo')
 @Unique(['title', 'user'])
 export class Todo implements Model<TodoOutputDto, TodoInputDto> {
+
   hasOwner = true;
-  outputDTO: TodoInputDto;
   inputDTO: TodoInputDto;
 
   static relations = ['user', 'user.todos', 'folder', 'folder.user', 'folder.todos']

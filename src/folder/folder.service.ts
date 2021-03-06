@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Folder } from '../model/folder.entity';
-import { ModelService } from '../output/output.service';
+import { ModelService } from '../DefaultService/default.service';
 
 
 @Injectable()

@@ -1,11 +1,15 @@
-import { Outputable } from '../output/output.service';
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Model } from '../DefaultService/default.service';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
 import { Folder } from './folder.entity';
 import { User } from './user.entity';
-import { TodoOutputDto } from 'src/dto/todo.dto';
+import { TodoInputDto, TodoOutputDto } from '../dto/todo.dto';
 
 @Entity('todo')
-export class Todo implements Outputable<TodoOutputDto> {
+@Unique(['title', 'user'])
+export class Todo implements Model<TodoOutputDto, TodoInputDto> {
+  hasOwner = true;
+  outputDTO: TodoInputDto;
+  inputDTO: TodoInputDto;
 
   static relations = ['user', 'user.todos', 'folder', 'folder.user', 'folder.todos']
 
@@ -13,7 +17,14 @@ export class Todo implements Outputable<TodoOutputDto> {
     return { id: this.id, 
       title: this.title,
       descr: this.descr,
-      user: this.user.output()
+      folder: this.folder.shortoutput(),
+      user: this.user.shortoutput()
+    }
+  }
+  shortoutput() : any {
+    return { id: this.id, 
+      title: this.title,
+      descr: this.descr
     }
   }
 

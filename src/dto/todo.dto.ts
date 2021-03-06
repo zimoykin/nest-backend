@@ -1,12 +1,16 @@
+import { Folder } from "../model/folder.entity";
+import { Createble } from "../DefaultService/default.service";
 import { FolderOutputDto } from "./folder.dto";
 import { UserOutputDto } from "./user.dto";
 
-export interface TodoInputDto {
+export interface TodoInputDto extends Createble {
     title: string;
     description: string;
+    isDone: boolean;
+    folder: Folder
 }
 
-export interface TodoOutputDto {
+export interface TodoOutputDto extends Createble {
     id: string;
     title: string;
     description: string;

@@ -1,7 +1,8 @@
-import { Controller, Get, Req, Query, Post, Body } from '@nestjs/common';
-import { Folder } from '../model/folder.entity';
+import { Controller } from '@nestjs/common';
 import { DefaultController } from '../default/default.controller';
+import { FolderService } from './folder.service';
 
 
 @Controller('api/folder')
-export class FolderController extends DefaultController<Folder>(Folder,'folder') { }
+export class FolderController 
+extends DefaultController(FolderService, 'folder') { }

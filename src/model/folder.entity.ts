@@ -1,21 +1,33 @@
 import { userInfo } from 'os';
-import { Outputable } from '../output/output.service';
+import { Model } from '../DefaultService/default.service';
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Todo } from './todo.entity';
 import { User } from './user.entity';
-import { FolderOutputDto } from 'src/dto/folder.dto';
+import { FolderDto, FolderOutputDto } from 'src/dto/folder.dto';
 
 @Entity('folder')
-export class Folder implements Outputable<FolderOutputDto>{
+export class Folder implements Model<FolderOutputDto, FolderDto>{
+  hasOwner = true
+  inputDTO: FolderDto;
+  outputDTO: FolderOutputDto;
 
   static relations = ['todos', 'user', 'user.todos', 'todos.user']
 
-  output() : any {
+  output(): any {
     return { id: this.id, 
       title: this.title,
       descr: this.descr,
       todos: this.todos.length || 0,
-      user: this.user.output()
+      user: this.user.shortoutput()
+    }
+  }
+
+  shortoutput (): any {
+    return { id: this.id, 
+      title: this.title,
+      descr: this.descr,
+      todos: this.todos.map ( todo => { todo.shortoutput()}),
+      user: this.user.shortoutput()
     }
   }
 

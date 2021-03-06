@@ -7,7 +7,7 @@ import { UsersModule } from '../user/user.module';
 import { FolderModule } from '../folder/folder.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Todo]), UsersModule],
+    imports:        [TypeOrmModule.forFeature([Todo]), UsersModule],
     providers:      [TodoService],
     controllers:    [TodoController],
     exports:        []

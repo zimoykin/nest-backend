@@ -1,10 +1,10 @@
 import { User } from "../model/user.entity";
 import { sign as jwt } from "jsonwebtoken";
 import { FolderOutputDto } from "./folder.dto";
-import { Outputable } from "../output/output.service";
+import { Createble } from "../DefaultService/default.service";
 
 
-export interface UserInputDto {
+export interface UserInputDto extends Createble {
     username: string;
     email: string;
     password: string;

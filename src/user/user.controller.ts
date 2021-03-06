@@ -1,60 +1,40 @@
-import { BadRequestException, Body, Controller, Get, HttpException, HttpStatus, Param, Post, Query, Res } from '@nestjs/common';
-import { UserInputDto, UserOutputDto, UserRefreshToken, UserSearchDto } from '../dto/user.dto';
+import { Body, Controller, HttpException, HttpStatus, Post } from '@nestjs/common';
 import { User } from '../model/user.entity';
+import { DefaultController } from '../default/default.controller';
+import { UserAccess, UserInputDto, UserRefreshToken } from '../dto/user.dto';
 import { UsersService } from './user.service'
 
-@Controller('user')
-export class UserController {
-  constructor(private service: UsersService) 
-  {}
+@Controller()
+export class UserController  {
+  constructor(private userservice: UsersService) { }
 
-  @Get('api/search')
-  async search ( @Query() params: UserSearchDto ) {
-    return await this.service.readAll(params).then ( users => {
-      return users.map ( (val) => {
-        return val.output()
-      })
-    })
-  }
-
-  @Get('')
-  async getAll() {
-    return this.service.readAll({})
-  }
-
-  @Get(':id')
-  async findOne( @Param('id') id: string) {
-      return this.service.read({id: id})
-  }
-
-  // @Post()
-  // async create(@Body() userdto: UserInputDto) {
-  //   try{
-  //     let user = await this.service.createOne(userdto);
-  //     return this.service.toAccess(user)
-  //    }
-  //    catch (err) {
-  //       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
-  //    }
-  // }
-
-  @Post('login')
-  async login (@Body() userdto: UserInputDto) {
-    let access = await this.service.login( userdto.email, userdto.password )
+  @Post('/login')
+  async login(@Body() userdto: UserInputDto) {
+    let access = await this.userservice.login(userdto.email, userdto.password);
     if (!access) {
-      throw new HttpException(Error('password is incorrect'), HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        Error('password is incorrect'),
+        HttpStatus.BAD_REQUEST,
+      );
     }
-    return this.service.toAccess(access)
+    return this.userservice.toAccess(access);
   }
 
-  // @Post('refresh')
-  // async refresh ( @Body() payload: UserRefreshToken ) {
-  //   return this.service.checkRefToken( payload.refreshToken )
-  //   .then ( user => {
-  //     return this.service.toAccess(user)
-  //   }).catch (err => {
-  //     throw new HttpException(err, HttpStatus.BAD_REQUEST);
-  //   })
-  // };
+  @Post('refresh')
+  async refresh(@Body() payload: UserRefreshToken) {
+    return this.userservice
+      .checkRefToken(payload.refreshToken)
+      .then((user) => {
+        return this.userservice.toAccess(user);
+      })
+      .catch((err) => {
+        throw new HttpException(err, HttpStatus.BAD_REQUEST);
+      });
+  }
 
+  @Post('register')
+  async register(@Body() payload: UserInputDto): Promise<UserAccess> {
+    let user = await this.userservice.createOne(payload);
+    return this.userservice.toAccess(user);
+  }
 }

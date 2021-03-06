@@ -1,25 +1,7 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Put, Query, Req, Res } from '@nestjs/common';
-import { Todo } from '../model/todo.entity';
-import { TodoInputDto, TodoOutputDto, TodoUpdateDto } from '../dto/todo.dto';
+import { Controller } from '@nestjs/common';
 import { TodoService } from './todo.service';
+import { DefaultController } from '../default/default.controller';
 
 @Controller('api/todo')
-export class TodoController {
-    constructor( private service: TodoService ) {}
-
-    @Get()
-    async getAll( @Req() req ) {
-      return this.service.readAll({ user: req.user })
-    }
-
-    @Post()
-    async create( @Body() input: TodoInputDto, @Req() req ) {
-      return this.service.read(input)
-    }
-
-    @Put(':id')
-    async put ( @Param('id') id: string, @Body() input: TodoUpdateDto, @Req() req) {
-
-    }
-
-}
+export class TodoController
+extends DefaultController(TodoService, 'todo') { }

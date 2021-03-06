@@ -1,13 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import {
   UserAccess,
-  UserRefreshToken,
-  UserSearchDto,
+  UserInputDto,
+  UserRefreshToken
 } from '../dto/user.dto';
-import { createQueryBuilder } from 'typeorm';
 import { User } from '../model/user.entity';
 import * as bcrypt from 'bcrypt';
-import { ModelService } from '../output/output.service';
+import { ModelService } from '../DefaultService/default.service';
+import { isError } from 'node:util';
 
 const jwt = require('jsonwebtoken');
 
@@ -39,21 +39,18 @@ export class UsersService extends ModelService(User, User.relations){
     });
   }
 
-  // async createOne(userData: UserInputDto) {
-  //   let user = this.usersRepository.create({
-  //     isActive: true,
-  //     username: userData.username,
-  //     email: userData.email,
-  //     password: userData.password,
-  //   });
-  //   await this.usersRepository.save(user);
+  async createOne(userData: UserInputDto): Promise<User>{
 
-  //   return user;
-  // }
-
-  // async remove(id: string): Promise<void> {
-  //   await this.usersRepository.delete(id);
-  // }
+    let user = await this.repository.create({
+      isActive: true,
+      username: userData.username,
+      email: userData.email,
+      password: userData.password,
+    })
+   
+    return this.repository.save(user);  
+  
+  }
 
   toAccess(user: User): Promise<UserAccess> {
     const jwt_secret = process.env.JWTSECRET;

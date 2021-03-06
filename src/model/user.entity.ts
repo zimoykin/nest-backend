@@ -11,29 +11,40 @@ import {
 import * as bcrypt from 'bcrypt';
 import { Todo } from '../model/todo.entity';
 import { Folder } from './folder.entity';
-import { Outputable } from 'src/output/output.service';
-import { UserOutputDto } from 'src/dto/user.dto';
+import { Model } from 'src/DefaultService/default.service';
+import { UserInputDto, UserOutputDto } from 'src/dto/user.dto';
 
 @Entity('user')
-export class User implements Outputable<UserOutputDto> {
+export class User implements Model<User, UserInputDto> {
+  
+  hasOwner = false;
+  inputDTO: UserInputDto;
+  outputDTO: UserInputDto;
 
-  static relations: string[] = ['todos', 'folders', 'folders.todos']
+  static relations: string[] = ['todos', 'folders', 'folders.todos'];
 
-  output (): any {
-    return new Promise( resolve => {
-      resolve({id: this.id,
-              username: this.username,
-              email: this.email,
-              folder: this.folders.map ( val => {
-                return {
-                  id: val.id,
-                  title: val.title,
-                  description: val.descr,
-                  todos: val.todos.length || 0
-                };
-              })
-      })
-    })
+  output(): any {
+    return {
+      id: this.id,
+      username: this.username,
+      email: this.email,
+      folder: this.folders.map((val) => {
+        return {
+          id: val.id,
+          title: val.title,
+          description: val.descr,
+          todos: val.todos.length || 0,
+        };
+      }),
+    };
+  }
+
+  shortoutput(): any {
+    return {
+      id: this.id,
+      username: this.username,
+      email: this.email,
+    };
   }
 
   @PrimaryGeneratedColumn('uuid')

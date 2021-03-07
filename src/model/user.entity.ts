@@ -11,10 +11,10 @@ import * as bcrypt from 'bcrypt';
 import { Todo } from '../model/todo.entity';
 import { Folder } from './folder.entity';
 import { Model } from '../DefaultService/default.service';
-import { UserInputDto } from 'src/dto/user.dto';
+import { UserInputDto, UserOutputDto } from '../dto/user.dto';
 
 @Entity('user')
-export class User implements Model<User, UserInputDto> {
+export class User implements Model<UserOutputDto, UserInputDto> {
   
   hasOwner = false;
   inputDTO: UserInputDto;

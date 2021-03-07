@@ -1,4 +1,3 @@
-import { userInfo } from 'os';
 import { Model } from '../DefaultService/default.service';
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Todo } from './todo.entity';

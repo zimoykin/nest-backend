@@ -1,7 +1,7 @@
 import { Model } from '../DefaultService/default.service';
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
-import { Folder } from './folder.entity';
-import { User } from './user.entity';
+import { Folder } from '../model/folder.entity';
+import { User } from '../model/user.entity';
 import { TodoInputDto, TodoOutputDto } from '../dto/todo.dto';
 
 @Entity('todo')

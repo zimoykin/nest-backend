@@ -9,9 +9,6 @@ import { config } from '../ormconfig';
 import { TodoModule } from './todo/todo.module';
 import { AuthMiddleware } from './middleware/auth.middleware';
 import { FolderModule } from './folder/folder.module';
-import { DefaultController } from './default/default.controller';
-import { OutputModule } from './DefaultService/default.module';
-import { UserProtectedController } from './user/user-protected.controller';
 
 
 @Module({

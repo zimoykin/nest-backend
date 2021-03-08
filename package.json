@@ -30,6 +30,7 @@
     "@nestjs/typeorm": "^7.1.5",
     "apollo-server-express": "^2.21.0",
     "bcrypt": "^5.0.1",
+    "child_process": "^1.0.2",
     "class-validator": "^0.13.1",
     "dotenv": "^8.2.0",
     "graphql": "^15.5.0",

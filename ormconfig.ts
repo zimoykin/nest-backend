@@ -23,6 +23,6 @@ export const config: TypeOrmModuleOptions = {
     __dirname + '/src/migration/*{.ts,.js}'
   ],
   cli: {
-    migrationsDir: '../migration',
+    migrationsDir: 'src/migration',
   }
 };

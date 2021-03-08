@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   app-nest:
-    image: 'node:latest'
+    image: 'node:alpine'
     container_name: nest-js
     build:
       context: .
@@ -20,7 +20,7 @@ services:
 
   db-nest:
     container_name: db-nest
-    image: postgres:latest
+    image: postgres:alpine
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: username

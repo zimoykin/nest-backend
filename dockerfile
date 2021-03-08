@@ -1,4 +1,4 @@
-FROM node:latest as builder
+FROM node:alpine as builder
 USER root
 RUN npm cache clean --force
 WORKDIR /workspace

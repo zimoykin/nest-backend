@@ -1,14 +1,11 @@
-FROM node:alpine as builder
-USER root
-RUN npm cache clean --force
-WORKDIR /workspace
-RUN npm i -g @nestjs/cli
-COPY package.json yarn.lock /workspace/
-COPY . .
-RUN apk add --no-cache make gcc g++ python && \
-  npm install && \
-  npm rebuild bcrypt --build-from-source && \
-  apk del make gcc g++ python
+FROM node:alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
 RUN npm build
+RUN npm i -g @nestjs/cli
+COPY . .
 EXPOSE 3000
+RUN apk add --no-cache make gcc g++ python && \
+  npm rebuild bcrypt --build-from-source
 CMD ["npm", "run", "start"]

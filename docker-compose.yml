@@ -1,26 +1,21 @@
-version: '3.4'
+version: '3.9'
 
 services:
   app-nest:
-    image: 'node:alpine'
     container_name: nest-js
-    build:
+    build: 
       context: .
-    #network_mode: host
-    networks: 
-      - front-network
-      - back-network
     env_file:
       - .env
     depends_on:
       - db-nest
     ports:
       - '3000:3000'
-    command: 'npm start'
+    command: ['npm','start']
 
   db-nest:
     container_name: db-nest
-    image: postgres:alpine
+    image: postgres:12-alpine
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: username
@@ -28,30 +23,25 @@ services:
       PG_DATA: /var/lib/postgresql/data
     ports:
       - '5432:5432'
-    networks: 
-        - back-network
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+
   proxy:
-    image: nginx:alpine
     container_name: webproxy
     build:
       context: .
       dockerfile: proxy
     restart: unless-stopped
     tty: true
-    networks: 
-      - front-network
-      - back-network
-    volumes: 
+    volumes:
       - ./nginx-conf/nginx.conf:/etc/nginx/nginx.conf
     ports:
-      - "8005:80"
+      - "8005:8005"
 
-networks:
-  back-network:
-  front-network:
-    external: true
 volumes:
   pgdata:
+
+networks:
+  frontend:
+  backend:

@@ -6,10 +6,10 @@ services:
     container_name: nest-js
     build:
       context: .
-    network_mode: host
-    # networks: 
-    #   - front-network
-    #   - back-network
+    #network_mode: host
+    networks: 
+      - front-network
+      - back-network
     env_file:
       - .env
     depends_on:
@@ -28,24 +28,26 @@ services:
       PG_DATA: /var/lib/postgresql/data
     ports:
       - '5432:5432'
-    network_mode: host
-    # networks: 
-    #    - back-network
+    networks: 
+        - back-network
     volumes:
       - pgdata:/var/lib/postgresql/data
 
-  reverseproxy:
+  proxy:
     image: nginx:alpine
-    container_name: reverseproxy
+    container_name: webproxy
     build:
       context: .
-      dockerfile: dockerfilenginx
+      dockerfile: proxy
     restart: unless-stopped
     tty: true
+    networks: 
+      - front-network
+      - back-network
     volumes: 
       - ./nginx-conf/nginx.conf:/etc/nginx/nginx.conf
     ports:
-      - "8005:8005"
+      - "8005:80"
 
 networks:
   back-network:

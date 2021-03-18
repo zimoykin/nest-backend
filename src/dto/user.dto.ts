@@ -1,24 +1,33 @@
-import { User } from "../model/user.entity";
 import { sign as jwt } from "jsonwebtoken";
 import { FolderOutputDto } from "./folder.dto";
-import { Createble } from "../DefaultService/default.service";
+import { Type } from "@nestjs/common";
+import { IsEmail, IsNotEmpty, IsString } from "class-validator";
 
-
-export interface UserInputDto extends Createble {
-    username: string;
-    email: string;
-    password: string;
+export class UserInputDto {
+  @IsString()
+  @IsNotEmpty()
+  username: string;
+  @IsString()
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+  @IsNotEmpty()
+  @IsString()
+  password: string;
 }
 
-export interface UserOutputDto {
+export class UserOutputDto {
     username: string;
     email: string;
     id: string;
     folder: FolderOutputDto[];
 }
 
-export interface UserSearchDto {
+export class UserSearchDto {
+  @IsString()
   username?: string;
+  @IsString()
+  @IsEmail()
   email?: string;
 }
 
@@ -28,7 +37,9 @@ export interface UserAccess {
   refreshToken: string;
 }
 
-export interface UserRefreshToken {
+export class UserRefreshToken {
+  @IsString()
+  @IsNotEmpty()
   refreshToken: string;
 }
 
@@ -42,8 +53,10 @@ export const getAccess = (user: string): UserAccess => {
   return { id: user, accessToken: accessToken, refreshToken: refreshToken };
 };
 
-// export const userOutput = ( user: User ) : UserOutputDto => {
-//   let user_dto: UserOutputDto = user
-//   //username: user.username, email: user.email, id: user.id
-//   return user_dto
-// }
+
+
+export interface ArgumentMetadata<T> {
+  type: 'body' | 'query' | 'param' | 'custom';
+  metatype?: Type<Type>;
+  data?: string;
+}

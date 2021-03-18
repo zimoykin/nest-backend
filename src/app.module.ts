@@ -9,6 +9,7 @@ import { config } from '../ormconfig';
 import { TodoModule } from './todo/todo.module';
 import { AuthMiddleware } from './middleware/auth.middleware';
 import { FolderModule } from './folder/folder.module';
+import { WsGateway } from './ws.gateway';
 
 
 @Module({
@@ -19,12 +20,12 @@ import { FolderModule } from './folder/folder.module';
     UsersModule, TodoModule, FolderModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, WsGateway],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-    .apply(AuthMiddleware).forRoutes('api')
+    .apply(AuthMiddleware).forRoutes('api/user','api/folder', 'api/todo')
     .apply(LoggerMiddleware).forRoutes('/')
   }
 }

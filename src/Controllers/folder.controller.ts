@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
-import { DefaultController } from '../default/default.controller';
-import { FolderService } from './folder.service';
+import { DefaultController } from '../Controllers/default/default.controller';
+import { FolderService } from '../folder/folder.service';
 
 
 @Controller('api/folder')

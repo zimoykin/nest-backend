@@ -10,9 +10,10 @@ export interface ModelService<T, R> {
   readAll: (query: any) => Promise<T[]>;
   update: (id: string, input: R | any) => Promise<T>;
   create: (input: R, user: User) => Promise<T>;
+  delete: (id: string) => Promise<string>;
 }
 
-export interface Model<T, R extends Createble> {
+export interface Model<T, R> {
   id: string;
   inputDTO: R;
   hasOwner: boolean;
@@ -20,8 +21,6 @@ export interface Model<T, R extends Createble> {
   output: () => T;
   shortoutput: () => T;
 }
-export interface Createble {}
-export interface Outputable {}
 
 type Constructor<I> = new (...args: any[]) => I;
 
@@ -87,11 +86,18 @@ export function ModelService<T extends Model<T, R>, R>(
         throw new HttpException(err.message, 400);
       }
     }
+
+    public async delete (id: string): Promise<string> {
+      return this.repository.delete(id).then( val => {
+        return id
+      })
+    }
+
   }
 
   return DataServiceHost;
 }
 
-export interface Owner extends Createble {
+export interface Owner {
   user: User;
 }

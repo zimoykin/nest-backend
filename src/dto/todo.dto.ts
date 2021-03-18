@@ -1,16 +1,19 @@
 import { Folder } from "../model/folder.entity";
-import { Createble } from "../DefaultService/default.service";
 import { FolderOutputDto } from "./folder.dto";
 import { UserOutputDto } from "./user.dto";
+import { IsBoolean, IsString } from "class-validator";
 
-export interface TodoInputDto extends Createble {
+export class TodoInputDto {
+    @IsString()
     title: string;
+    @IsString()
     description: string;
+    @IsBoolean()
     isDone: boolean;
     folder: Folder
 }
 
-export interface TodoOutputDto extends Createble {
+export class TodoOutputDto {
     id: string;
     title: string;
     description: string;
@@ -19,7 +22,9 @@ export interface TodoOutputDto extends Createble {
     folder: FolderOutputDto;
 }
 
-export interface TodoUpdateDto {
+export class TodoUpdateDto {
+    @IsString()
     title?: string;
+    @IsString()
     description?: string;
 }

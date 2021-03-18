@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Folder } from '../model/folder.entity';
 import { UsersModule } from '../user/user.module';
-import { FolderController } from './folder.controller';
+import { FolderController } from '../Controllers/folder.controller';
 import { FolderService } from './folder.service';
 
 @Module({

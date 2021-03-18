@@ -1,8 +1,10 @@
-import { Createble } from "../DefaultService/default.service";
+import { IsString } from "class-validator";
 import { UserOutputDto } from "./user.dto";
 
-export interface FolderDto extends Createble {
+export class FolderDto {
+    @IsString()
     title: string;
+    @IsString()
     description: string;
 }
 

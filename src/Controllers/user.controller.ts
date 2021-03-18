@@ -1,21 +1,20 @@
-import { Body, Controller, HttpException, HttpStatus, Post } from '@nestjs/common';
-import { User } from '../model/user.entity';
-import { DefaultController } from '../default/default.controller';
+import { Body, Controller, HttpException, HttpStatus, Post, UseGuards, ValidationPipe } from '@nestjs/common';
+import { NewUserGuard } from '../guards/newUser.guard';
 import { UserAccess, UserInputDto, UserRefreshToken } from '../dto/user.dto';
-import { UsersService } from './user.service'
+import { UsersService } from '../user/user.service'
+import { ServerError } from '../errors/ResponseError';
+import { NetwortError } from '../enums/networkError';
 
-@Controller()
-export class UserController  {
-  constructor(private userservice: UsersService) { }
+@Controller('api')
+export class UserController {
+
+  constructor(private userservice: UsersService) {}
 
   @Post('/login')
   async login(@Body() userdto: UserInputDto) {
     let access = await this.userservice.login(userdto.email, userdto.password);
     if (!access) {
-      throw new HttpException(
-        Error('password is incorrect'),
-        HttpStatus.BAD_REQUEST,
-      );
+      throw ServerError(NetwortError.badRequest);
     }
     return this.userservice.toAccess(access);
   }
@@ -33,7 +32,8 @@ export class UserController  {
   }
 
   @Post('register')
-  async register(@Body() payload: UserInputDto): Promise<UserAccess> {
+  @UseGuards(NewUserGuard)
+  async register(@Body( new ValidationPipe() ) payload: UserInputDto): Promise<UserAccess> {
     let user = await this.userservice.createOne(payload);
     return this.userservice.toAccess(user);
   }

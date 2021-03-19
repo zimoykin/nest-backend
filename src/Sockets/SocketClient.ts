@@ -6,8 +6,8 @@ export class SocketClient {
     id: string
     ws: Socket
 
-    constructor(client: Socket){
-        this.id = uuid();
+    constructor(client: Socket, id: string){
+        this.id = id;
         this.ws = client;
     }
 

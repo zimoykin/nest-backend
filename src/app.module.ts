@@ -17,7 +17,7 @@ import { WsGateway } from './ws.gateway';
     TypeOrmModule.forRoot(
       config
     ),
-    UsersModule, TodoModule, FolderModule
+    UsersModule, TodoModule, FolderModule,
   ],
   controllers: [AppController],
   providers: [AppService, WsGateway],

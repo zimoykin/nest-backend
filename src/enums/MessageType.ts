@@ -1,5 +1,6 @@
 
 export enum MessageType {
-    'chatMessage',
-    'other'
+    chatMessage = 'chatMessage',
+    other = 'other',
+    whoIsOnline = 'whoIsOnline'
 }

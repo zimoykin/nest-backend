@@ -7,7 +7,6 @@ import {
 import { User } from '../model/user.entity';
 import * as bcrypt from 'bcrypt';
 import { ModelService } from '../DefaultService/default.service';
-import { isError } from 'node:util';
 
 const jwt = require('jsonwebtoken');
 

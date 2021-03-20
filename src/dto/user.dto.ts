@@ -2,6 +2,7 @@ import { sign as jwt } from "jsonwebtoken";
 import { FolderOutputDto } from "./folder.dto";
 import { Type } from "@nestjs/common";
 import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { User } from "src/model/user.entity";
 
 export class UserInputDto {
   @IsString()
@@ -21,6 +22,10 @@ export class UserOutputDto {
     email: string;
     id: string;
     folder: FolderOutputDto[];
+
+    public static output(user: User) : UserOutputDto {
+      return { id: user.id, email: user.email, username: user.username, folder: user.folders.map( val => { return val.shortoutput()}) }
+    }
 }
 
 export class UserSearchDto {

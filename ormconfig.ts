@@ -14,7 +14,7 @@ export const config: TypeOrmModuleOptions = {
   database: POSTGRES_DB,
   synchronize: false,
   entities: [
-    __dirname + "/src/model/*.entity{.ts,.js}"
+    __dirname + "/src/_MODEL/*.entity{.ts,.js}"
   ],
   subscribers: [
     __dirname + '/src/subscribers/**/*{.ts,.js}'
@@ -23,6 +23,6 @@ export const config: TypeOrmModuleOptions = {
     __dirname + '/src/migration/*{.ts,.js}'
   ],
   cli: {
-    migrationsDir: 'src/migration',
+    migrationsDir: 'src/migration/',
   }
 };

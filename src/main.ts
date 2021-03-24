@@ -18,7 +18,7 @@ async function bootstrap() {
         exec('npm run migration-run', (err) => {
           console.log(`migration done!`);
           config.migrations.map((val) => {
-            exec(`rm ${val.toString().replace('{.ts,.js}', '')}`);
+            exec(`rm ${val.toString().replace('{.ts,.js}', '')} -f`);
           });
         });
       });

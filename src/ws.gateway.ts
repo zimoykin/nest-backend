@@ -7,10 +7,10 @@ import {
   SubscribeMessage,
  } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { SocketClient } from './Sockets/SocketClient';
+import { SocketClient } from './_CONTROLLER/Sockets/SocketClient';
 import { isJWT } from 'class-validator';
-import { UsersService } from './user/user.service';
-import { Chat, Chats } from './Sockets/Chat';
+import { UsersService } from './_SERVICES/user/user.service';
+import { Chat, Chats } from './_CONTROLLER/Sockets/Chat';
 const jwt = require("jsonwebtoken");
 const jwt_secret = process.env.JWTSECRET;
 
@@ -96,7 +96,7 @@ export class WsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayD
       this.clients = this.clients.filter( val => { 
         return val.id != client.id}
       )
-      this.users.read( {id: userid} ).then ( user => {
+      this.users.read(userid).then ( user => {
         if (user !== undefined) {
           this.clients.push(new SocketClient(client, client.id, user.id))
           resolve()

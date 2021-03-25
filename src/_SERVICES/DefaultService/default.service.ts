@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { getRepository, Repository } from 'typeorm';
 import { HttpException, Type } from '@nestjs/common';
 import { User } from '../../_MODEL/user.entity';
 import { ApiModel } from '../../_MODEL/apimodel';
@@ -11,7 +11,7 @@ export class Service <T> {
   readAll: (query: any) => Promise<T[]>;
   update: (id: string, input: any | any) => Promise<T>;
   create: (input: any, user: User) => Promise<T>;
-  delete: (id: string) => Promise<string>;
+  delete: (id: string) => Promise<any>;
 }
  
 type Constructor<I> = new (...args: any[]) => I;
@@ -46,7 +46,7 @@ export function ModelService<T extends ApiModel> (entity: Constructor<T>, relati
     }
 
     public async update(id: string, input: any): Promise<T> {
-      return this.repository.update(id, input).then((updated) => {
+      return this.repository.update(id, input).then( () => {
         return this.repository.findOne(id, { relations: relations}).then ( val => {
           return val.shortoutput()
         })
@@ -79,9 +79,9 @@ export function ModelService<T extends ApiModel> (entity: Constructor<T>, relati
       }
     }
 
-    public async delete (id: string): Promise<string> {
-      return this.repository.delete(id).then( val => {
-        return id
+    public async delete (id: string): Promise<any> {
+      return this.repository.delete(id).then( () => {
+        return { deleted: id }
       })
     }
 
@@ -96,90 +96,3 @@ export interface Owner {
 
 
 
-
-// interface Crud<T extends Model> {
-//   repository: Repository<T>
-//   getOne: () => T
-//   getAll: () => T
-//   create: () => T
-//   delete: () => T
-//   patch: () => T
-
-// }
-// class Repository<T extends Model> {
-//   howItIsGoing(some: T): T {
-//       console.log('im OK ' + some.name)
-//       return some;
-//   }
-// }
-
-/////////////
-
-// class RestController<T extends Model> implements Crud<T> {
-
-//   repository = new Repository<T>()
-//   model: T
-  
-//   constructor (some: T) {
-//       this.model = some
-//   }
-
-//   getOne(): T {
-//       return this.repository.howItIsGoing(this.model)
-//   }
-//   create(): T {
-//       return this.repository.howItIsGoing(this.model)
-//   }
-//   delete(): T {
-//       return this.repository.howItIsGoing(this.model)
-//   }
-//   getAll(): T {
-//       return this.repository.howItIsGoing(this.model)
-//   }
-//   patch(): T {
-//       return this.repository.howItIsGoing(this.model)
-//   }
-
-
-// }
-
-// class Model {
-//   name: string
-//   constructor (name: string) {
-//       this.name = name
-//   }
-// }
-
-// class Robot implements Model{
-//   name: string;
-//   constructor (name: string) {
-//       this.name = name
-//   }
-// }
-
-// class RobotController extends RestController<Robot> {}
-
-// class PersonController extends RestController<Person> {
-//   create(): Person{
-//        console.log('override this')
-//       return this.repository.howItIsGoing(this.model) 
-//   }
-// }
-
-// let robot = new Robot('Robot')
-// let controller = new RobotController(robot)
-
-// controller.create()
-
-
-// class Person implements Model{
-//   name: string;
-//   constructor (name: string) {
-//       this.name = name
-//   }
-// }
-
-// let mary = new Person('mary')
-// let maryController = new PersonController(mary)
-
-// maryController.create()

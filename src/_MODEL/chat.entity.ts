@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { User } from './user.entity';
 import { ApiModel } from './apimodel';
 
@@ -6,10 +6,15 @@ import { ApiModel } from './apimodel';
 export class Chat implements ApiModel {
 
   hasOwner = false;
-  static relations = ['users']
+  static relations = ['users', 'admin']
 
   output() : any {
-    return { id: this.id, users: this.users.map( val => { return val.shortoutput()}) }
+    return { 
+      id: this.id, 
+      title: this.title,
+      settings: this.settings,
+      admin: this.admin.shortoutput(),
+      users: this.users.map( val => { return val.shortoutput()}) }
   }
   shortoutput() : any {
     return { 
@@ -34,8 +39,15 @@ export class Chat implements ApiModel {
   @Column({name: 'settings', type: 'jsonb'})
   settings: any;
 
-  @ManyToMany(() => User, (user: User) => user.chats)
-  @JoinTable({ name: "chatmembers" })
+  @ManyToOne(type => User, user => user.folders)
+  @JoinColumn({ name: "userId" })
+  admin: User;
+
+  @ManyToMany(() => User, (user) => user.chats, { cascade: true })
+  @JoinTable({name: 'chatmembers',
+    joinColumn: { name: 'chaId', referencedColumnName: 'id'},
+    inverseJoinColumn: { name: 'userId', referencedColumnName: 'id'}
+  })
   users: User[];
 
 }

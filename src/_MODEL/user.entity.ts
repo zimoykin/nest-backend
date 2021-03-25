@@ -23,7 +23,7 @@ export class User implements ApiModel {
   hasOwner = false;
   inputDTO: UserInputDto;
 
-  static relations: string[] = ['todos', 'folders', 'folders.todos'];
+  static relations: string[] = ['todos', 'folders', 'folders.todos', 'chats'];
 
   output(): any {
     return {

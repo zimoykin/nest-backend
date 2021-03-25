@@ -1,7 +1,9 @@
-import { Body, Controller, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
 import { ChatService } from '../_SERVICES/chat/chat.service';
 import { RestController } from './rest.controller';
 import { ChatDto } from '../_MODEL/_DTO/chat.dto';
+import { ValidationPipe } from '../_UTILS/validate.pipe';
+import { Chat } from '../_MODEL/chat.entity';
 
 
 @Controller('api/chat')
@@ -11,42 +13,18 @@ export class ChatController extends RestController(ChatService) {
     super();
   }
 
-  @Post('/start')
-  startChat(@Body() input: ChatDto, @Req() req: any): Promise<string> {
-    let find = new Promise<string>((resolve, reject) => {
-        if ( input.users.filter( val => { return val === req.user.id}).length == 0 ) {
-            reject('could not created')
-        }
-
-
-      if (input.users.length > 0) {
-        this.service.repository
-          .query(
-            `SELECT chatmembers.chatid,
-                            COUNT(chatmembers.user_id)
-                        FROM
-                            chatmembers
-                        WHERE
-                            user_id IN ( ${input.users.map( val => { return "'" + val + "'" })} )
-                        GROUP BY chatmembers.chatid
-                    `,
-          )
-          .then((result) => {
-            if (result.length > 0 && result[0].count == input.users.length) {
-              resolve(result[0].chatid);
-            } else {
-            
-              this.service.create( input, req.user).then ( (val) => {  
-                resolve ((val as any))
-              })
-
-            }
-          });
-      } else {
-        reject();
-      }
-    });
-
-    return find;
+  @Get('')
+  getChat(@Req() req: any): Promise<Chat[]> {
+    return this.service.getChat(req)
   }
+
+  @Post('')
+  createChat(@Body( new ValidationPipe() ) input: ChatDto, @Req() req: any): Promise<Chat> {
+    return this.service.createChat(input, req)
+  }
+
+  @Patch(':id') patchChat ( @Param('id') id: string, @Body() input: any ): Promise<Chat> {
+    return this.service.updateChat(id, input)
+  }
+
 }

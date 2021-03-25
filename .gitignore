@@ -35,3 +35,5 @@ lerna-debug.log*
 
 # -migros
 src/migration/*
+
+playground.ts

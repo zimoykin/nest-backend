@@ -1,6 +1,4 @@
-import { v4 as uuid } from 'uuid';
 import { Socket } from 'socket.io';
-import { UserOutputDto } from 'src/_MODEL/_DTO/user.dto';
 
 export class SocketClient {
     

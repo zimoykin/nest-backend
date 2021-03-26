@@ -16,6 +16,7 @@ import { Folder } from './folder.entity';
 import { UserInputDto } from './_DTO/user.dto';
 import { ApiModel } from './apimodel';
 import { Chat } from './chat.entity';
+import { Message } from './message.entity';
 
 @Entity('user')
 export class User implements ApiModel {
@@ -81,6 +82,9 @@ export class User implements ApiModel {
 
   @ManyToMany(() => Chat, (chat) => chat.users, { eager: true })
   chats: Chat[];
+
+  @OneToMany( () => Message, message => message.user)
+  messages: Message[];
 
   @BeforeInsert()
   async hashPassword() {

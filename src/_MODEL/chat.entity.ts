@@ -1,6 +1,7 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { User } from './user.entity';
 import { ApiModel } from './apimodel';
+import { Message } from './message.entity'
 
 @Entity('chat')
 export class Chat implements ApiModel {
@@ -42,6 +43,9 @@ export class Chat implements ApiModel {
   @ManyToOne(type => User, user => user.folders)
   @JoinColumn({ name: "userId" })
   admin: User;
+
+  @OneToMany( () => Message, (message) => message.chat)
+  messages: Chat[];
 
   @ManyToMany(() => User, (user) => user.chats, { cascade: true })
   @JoinTable({name: 'chatmembers',

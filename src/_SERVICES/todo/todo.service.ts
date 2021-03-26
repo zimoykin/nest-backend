@@ -4,5 +4,5 @@ import { ModelService } from '../DefaultService/default.service'
 
 @Injectable()
 export class TodoService 
-  extends ModelService(Todo, Todo.relations) {
+extends ModelService(Todo, Todo.relations) {
 }

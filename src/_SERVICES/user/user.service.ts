@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import {
   UserAccess,
   UserInputDto,
@@ -16,7 +16,9 @@ export class UsersService extends ModelService(User, User.relations){
 
   login(email: string, password: string): Promise<User> {
 
-    return this.readRaw({ email: email }).then((user) => {
+    return this.readRaw({ email: email })
+    .then((user) => {
+      if (user) {
       return bcrypt.compare(password, user.password).then((ismatch) => {
         if (ismatch) {
           return user;
@@ -27,7 +29,8 @@ export class UsersService extends ModelService(User, User.relations){
           );
         }
       });
-    });
+    } else throw new NotFoundException()
+  });
   }
 
   refresh(refresh: UserRefreshToken) {

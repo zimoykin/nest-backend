@@ -22,13 +22,13 @@ export class AuthMiddleware implements NestMiddleware {
            throw ServerError(NetwortError.unauthorized, err.message)
         }
 
-        this.service.readRaw({id: payload.id})
+       return this.service.readRaw({id: payload.id})
         .then ( user => {
-        if (user.isActive) {
+        if (user && user.isActive) {
           (req as any).user = user
           next();
         } else {
-          throw ServerError(NetwortError.unauthorized, 'user unactive')
+          throw ServerError(NetwortError.unauthorized, 'user not found or unactive')
         }
         }).catch( (err) => {
           throw ServerError(NetwortError.unauthorized, err)

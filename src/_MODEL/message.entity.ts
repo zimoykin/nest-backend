@@ -14,7 +14,7 @@ export class Message implements ApiModel {
   output() : any {
     return { id: this.id, 
       message: this.message,
-      chat: this.chat.title,
+      chat: this.chat.shortoutput(),
       members: this.chat.users.length,
       user: this.user.shortoutput()
     }

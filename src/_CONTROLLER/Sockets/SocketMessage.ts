@@ -5,15 +5,12 @@ import { MessageType } from '../../_UTILS/enums/MessageType';
 export class SocketMessage {
     
     @IsString()
-    clientid: string
+    chatid: string
+    @IsString()
+    user:string
     @IsString()
     message: string
+    @IsString()
     type: MessageType
-
-    constructor(message: string, clientid: string){
-        this.clientid = clientid;
-        this.message = message;
-        this.type = MessageType.chatMessage
-    }
 
 }

@@ -10,7 +10,7 @@ import { Socket, Server } from 'socket.io';
 import { SocketClient } from './_CONTROLLER/Sockets/SocketClient';
 import { isJWT } from 'class-validator';
 import { UsersService } from './_SERVICES/user/user.service';
-import { Chat, Chats } from './_CONTROLLER/Sockets/Chat';
+import { Message } from './_MODEL/message.entity';
 const jwt = require("jsonwebtoken");
 const jwt_secret = process.env.JWTSECRET;
 
@@ -20,7 +20,6 @@ export class WsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayD
   @WebSocketServer()
   server: Server;
   clients = new Array<SocketClient>();
-  chats = new Array<Chats>();
 
   constructor(private users: UsersService) {}
 
@@ -58,37 +57,17 @@ export class WsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayD
     this.sendOnline()
   }
 
-  @SubscribeMessage( 'chat' )
-  chatMessage(client: Socket, chat: Chat) {
-
-    console.log( chat )
-   
-    const chatfilter = this.chats.filter ( val => {
-      return (val.user1 === chat.user1 &&
-      val.user2 === chat.user2)
-      || (val.user1 === chat.user2 &&
-        val.user2 === chat.user1)
-    })
-    console.log( chatfilter )
-    if (chatfilter.length > 0) {
-      if (chat.message !== undefined && 
-        chat.message.message !== 'start') {
-          chatfilter[0].messages.push(chat.message)
-        }
-    } else {
-      let newChat: Chats = {
-        user1: chat.user1,
-        user2: chat.user2,
-        messages: [chat.message]
+  public sendMessage(message: Message) {
+    console.log('send message to socket!')
+    this.clients.map( client => {
+      let filtred = message.chat.users.filter( val => { return val.id === client.user})
+      if (filtred.length>0) {
+        client.ws.emit('message', message)
       }
-      this.chats.push(newChat)
-    }
-
-    if (chat.message.message != 'start') {
-      this.sendChatMessage(chat)
-    }
-
+    })
+    
   }
+
 
   async addClient (client: Socket, userid: string) : Promise<void> {
 
@@ -96,8 +75,9 @@ export class WsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayD
       this.clients = this.clients.filter( val => { 
         return val.id != client.id}
       )
-      this.users.read(userid).then ( user => {
-        if (user !== undefined) {
+      this.users.readRaw({id:userid})
+      .then ( user => {
+        if (user != undefined) {
           this.clients.push(new SocketClient(client, client.id, user.id))
           resolve()
         }
@@ -105,6 +85,7 @@ export class WsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayD
           reject()
         }
       })
+      .catch ( err => console.log(err))
     })
 
   }
@@ -115,17 +96,6 @@ export class WsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayD
           this.clients.map( val => { return val.user })
         })}
     ) 
-  }
-
-  sendChatMessage(chat: Chat) {
-
-    const filtred = this.clients.filter( val => { 
-      return val.user === chat.user1 || val.user === chat.user2
-     })
-    filtred.map ( client => {
-      client.ws.emit ( 'chat', chat)
-    })
-
   }
    
 }

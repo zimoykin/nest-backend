@@ -84,4 +84,9 @@ export class UsersService extends ModelService(User, User.relations){
       });
     });
   }
+
+  saveFile(input: any, req: any): Promise<string> {
+    return
+  }
+
 }

@@ -10,7 +10,7 @@ async function bootstrap() {
   const migrate: boolean = process.argv.length == 3 && process.argv[2] == '--m';
   const app = await NestFactory.create(AppModule);
   app.enableCors();
-
+  //app.setGlobalPrefix('api');
   await app.listen(3000).then(() => {
     console.log('server started');
     if (migrate) {

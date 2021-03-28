@@ -11,10 +11,16 @@ import { AuthMiddleware } from './_UTILS/middleware/auth.middleware';
 import { FolderModule } from './_SERVICES/folder/folder.module';
 import { WsGateway } from './ws.gateway';
 import { ChatModule } from './_SERVICES/chat/chat.module';
-import { MessageController } from './_CONTROLLER/message.controller';
 import { MessageModule } from './_SERVICES/message/message.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
-let modules = [TypeOrmModule.forRoot(config), UsersModule, TodoModule, FolderModule, ChatModule, MessageModule]
+let modules = [TypeOrmModule.forRoot(config), 
+  UsersModule, TodoModule, FolderModule, ChatModule, MessageModule,
+  ServeStaticModule.forRoot({
+    rootPath: join(__dirname, '..', 'uploads'),
+    exclude: ['api/']
+  })]
 
 @Module({
   imports: modules,

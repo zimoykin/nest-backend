@@ -72,6 +72,9 @@ export class User implements ApiModel {
   @Column({ nullable:false })
   role: Roles;
 
+  @Column({nullable: true, default: '/photos/nophoto.jpg'})
+  photo: string;
+
   @Column({ nullable: true })
   refreshToken: string;
 

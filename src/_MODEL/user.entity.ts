@@ -17,6 +17,8 @@ import { UserInputDto } from './_DTO/user.dto';
 import { ApiModel } from './apimodel';
 import { Chat } from './chat.entity';
 import { Message } from './message.entity';
+import { Gender } from '../_UTILS/enums/genders';
+import { Roles } from '../_UTILS/enums/roles';
 
 @Entity('user')
 export class User implements ApiModel {
@@ -31,6 +33,8 @@ export class User implements ApiModel {
       id: this.id,
       username: this.username,
       email: this.email,
+      gender: this.gender,
+      role: this.role,
       folder: this.folders.map((val) => {
         return {
           id: val.id,
@@ -61,6 +65,12 @@ export class User implements ApiModel {
 
   @Column({ unique: true })
   email: string;
+
+  @Column({ default:'o', nullable:false })
+  gender: Gender;
+
+  @Column({ nullable:false })
+  role: Roles;
 
   @Column({ nullable: true })
   refreshToken: string;

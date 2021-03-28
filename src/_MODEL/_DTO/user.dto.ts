@@ -8,13 +8,23 @@ export class UserInputDto {
   @IsString()
   @IsNotEmpty()
   username: string;
+
   @IsString()
   @IsEmail()
   @IsNotEmpty()
   email: string;
+
   @IsNotEmpty()
   @IsString()
   password: string;
+
+  @IsString()
+  @IsNotEmpty()
+  gender: string;
+
+  @IsString()
+  @IsNotEmpty()
+  role: string;
 }
 
 export class UserOutputDto {

@@ -7,6 +7,8 @@ import {
 import { User } from '../../_MODEL/user.entity';
 import * as bcrypt from 'bcrypt';
 import { ModelService } from '../DefaultService/default.service';
+import { Gender } from '../../_UTILS/enums/genders';
+import { Roles } from '../../_UTILS/enums/roles';
 
 const jwt = require('jsonwebtoken');
 
@@ -41,13 +43,15 @@ export class UsersService extends ModelService(User, User.relations){
     });
   }
 
-  async createOne(userData: UserInputDto): Promise<User>{
+  async createOne(payload: UserInputDto): Promise<User>{
 
     let user = await this.repository.create({
       isActive: true,
-      username: userData.username,
-      email: userData.email,
-      password: userData.password,
+      username: payload.username,
+      email: payload.email,
+      password: payload.password,
+      gender: Gender[payload.gender],
+      role: Roles[payload.role]
     })
    
     return this.repository.save(user);  

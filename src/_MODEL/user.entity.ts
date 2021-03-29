@@ -35,6 +35,7 @@ export class User implements ApiModel {
       email: this.email,
       gender: this.gender,
       role: this.role,
+      photo: this.photo,
       folder: this.folders.map((val) => {
         return {
           id: val.id,
@@ -72,7 +73,7 @@ export class User implements ApiModel {
   @Column({ nullable:false })
   role: Roles;
 
-  @Column({nullable: true, default: '/photos/nophoto.jpg'})
+  @Column({nullable: true, default: 'nophoto.jpg'})
   photo: string;
 
   @Column({ nullable: true })

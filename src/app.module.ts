@@ -19,7 +19,7 @@ let modules = [TypeOrmModule.forRoot(config),
   UsersModule, TodoModule, FolderModule, ChatModule, MessageModule,
   ServeStaticModule.forRoot({
     rootPath: join(__dirname, '..', 'uploads'),
-    exclude: ['api/']
+    exclude: ['api/*']
   })]
 
 @Module({

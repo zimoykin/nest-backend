@@ -21,9 +21,9 @@ export class UserProtectedController extends RestController(UsersService) {
           }
         })
       }))
-      async upload( @UploadedFile() file, @Req() req: any) {
+      async upload(@UploadedFile() file, @Req() req: any) {
         console.log(file)
-        this.patch( req.user.id, {photo: file.path} )
+        this.patch(req.user.id, {photo: file.filename})
       }
 
 }

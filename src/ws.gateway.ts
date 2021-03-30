@@ -31,7 +31,10 @@ export class WsGateway
           client.disconnect();
         }
         jwt.verify(token, jwt_secret, async (err: Error, payload) => {
-          if (err) client.disconnect();
+          if (err) {
+            client.disconnect(); 
+            return
+          };
           if (payload.id) {
             this.addClient(client, payload.id).then(() => {
               console.log('client authorized');

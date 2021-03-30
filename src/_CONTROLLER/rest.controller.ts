@@ -1,6 +1,6 @@
 import { Body, Delete, Get, Inject, Param, Patch, Post, Query, Req, Type, ValidationPipe } from "@nestjs/common";
-import { Crud } from "../_SERVICES/Crud.service";
-import { Service } from "../_SERVICES/DefaultService/default.service";
+import { Crud } from "src/_SERVICES/Crud.service";
+import { Service } from "src/_SERVICES/DefaultService/default.service";
 
 type Constructor<T> = new (...args: any[]) => T
 

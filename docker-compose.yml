@@ -39,14 +39,14 @@ services:
       backend:
           ipv4_address: 172.20.0.13
     ports:
-      - "6379:6379"
+      - '6379:6379'
 
   redis-commander:
     image: rediscommander/redis-commander:latest
     environment:
       - REDIS_HOSTS=local:redis:6379
     ports:
-      - "8081:8081"
+      - '8081:8081'
     networks:
       frontend:
         ipv4_address: 172.18.18.10
@@ -65,7 +65,7 @@ services:
     volumes:
       - ./nginx-conf/nginx.conf:/etc/nginx/nginx.conf
     ports:
-      - "8005:80"
+      - '80:80'
     networks: 
       frontend:
           ipv4_address: 172.18.18.13

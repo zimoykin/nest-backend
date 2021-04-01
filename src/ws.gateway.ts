@@ -4,106 +4,104 @@ import {
   WebSocketServer,
   OnGatewayConnection,
   OnGatewayDisconnect,
-  SubscribeMessage,
-} from '@nestjs/websockets';
-import { Socket, Server } from 'socket.io';
-import { SocketClient } from './_CONTROLLER/Sockets/SocketClient';
-import { isJWT } from 'class-validator';
-import { UsersService } from './_SERVICES/user/user.service';
-import { Message } from './_MODEL/message.entity';
-const jwt = require('jsonwebtoken');
-const jwt_secret = process.env.JWTSECRET;
+} from '@nestjs/websockets'
+import { Socket, Server } from 'socket.io'
+import { SocketClient } from './_CONTROLLER/Sockets/SocketClient'
+import { isJWT } from 'class-validator'
+import { UsersService } from './_SERVICES/user/user.service'
+import { Message } from './_MODEL/message.entity'
+import * as jwt from 'jsonwebtoken'
+
+const jwt_secret = process.env.JWTSECRET
 
 @WebSocketGateway()
 export class WsGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  server: Server;
-  clients = new Array<SocketClient>();
+  server: Server
+  clients = new Array<SocketClient>()
 
-  constructor(
-    private users: UsersService
-    ) {}
+  constructor(private users: UsersService) {}
 
   handleConnection(client: Socket) {
     if (client.handshake.query.token) {
       if (isJWT(client.handshake.query.token)) {
-        let token = client.handshake.query.token;
+        const token = client.handshake.query.token
         if (!token) {
-          client.disconnect();
+          client.disconnect()
         }
-        jwt.verify(token, jwt_secret, async (err: Error, payload) => {
+        jwt.verify(token, jwt_secret, async (err: Error, payload: any) => {
           if (err) {
-            client.disconnect(); 
+            client.disconnect()
             return
-          };
+          }
           if (payload.id) {
             this.addClient(client, payload.id).then(() => {
-              console.log('client authorized');
-              this.sendOnline();
-            });
+              console.log('client authorized')
+              this.sendOnline()
+            })
           }
-        });
+        })
       }
     } else {
-      client.disconnect();
-      console.log('disconect');
+      client.disconnect()
+      console.log('disconect')
     }
   }
 
   handleDisconnect(client: Socket) {
     this.clients = this.clients.filter((val) => {
-      return val.id != client.id;
-    });
-    console.log(`client: ${client.id} disconected`);
-    console.log(`clients: ${this.clients.length}`);
+      return val.id != client.id
+    })
+    console.log(`client: ${client.id} disconected`)
+    console.log(`clients: ${this.clients.length}`)
 
-    this.sendOnline();
+    this.sendOnline()
   }
 
-  afterInit(server: Socket) {
-    this.server.emit('welcome');
-    this.sendOnline();
+  afterInit() {
+    this.server.emit('welcome')
+    this.sendOnline()
   }
 
   public sendMessage(message: Message) {
-    console.log('send message to socket!');
+    console.log('send message to socket!')
     this.clients.map((client) => {
-      let filtred = message.chat.users.filter((val) => {
-        return val.id === client.user;
-      });
+      const filtred = message.chat.users.filter((val) => {
+        return val.id === client.user
+      })
       if (filtred.length > 0) {
-        client.ws.emit('message', message);
+        client.ws.emit('message', message)
       }
-    });
+    })
   }
 
   async addClient(client: Socket, userid: string): Promise<void> {
     return new Promise((resolve, reject) => {
       this.clients = this.clients.filter((val) => {
-        return val.id != client.id;
-      });
+        return val.id != client.id
+      })
       this.users
         .readRaw({ id: userid })
         .then((user) => {
           if (user != undefined) {
-            this.clients.push(new SocketClient(client, client.id, user.id));
-            resolve();
+            this.clients.push(new SocketClient(client, client.id, user.id))
+            resolve()
           } else {
-            reject();
+            reject()
           }
         })
-        .catch((err) => console.log(err));
-    });
+        .catch((err) => console.log(err))
+    })
   }
 
   sendOnline() {
     this.clients.forEach((val) => {
       val.ws.emit('online', {
         users: this.clients.map((val) => {
-          return val.user;
+          return val.user
         }),
-      });
-    });
+      })
+    })
   }
 }

@@ -1,55 +1,66 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
-import { Folder } from './folder.entity';
-import { ApiModel } from './apimodel';
-import { User } from './user.entity';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Unique,
+  UpdateDateColumn,
+} from 'typeorm'
+import { Folder } from './folder.entity'
+import { ApiModel } from './apimodel'
+import { User } from './user.entity'
 
 @Entity('todo')
 @Unique(['title', 'user'])
 export class Todo implements ApiModel {
+  hasOwner = true
 
-  hasOwner = true;
+  static relations = [
+    'user',
+    'user.todos',
+    'folder',
+    'folder.user',
+    'folder.todos',
+  ]
 
-  static relations = ['user', 'user.todos', 'folder', 'folder.user', 'folder.todos']
-
-  output() : any {
-    return { id: this.id, 
+  output(): any {
+    return {
+      id: this.id,
       title: this.title,
       descr: this.descr,
       folder: this.folder.shortoutput(),
-      user: this.user.shortoutput()
+      user: this.user.shortoutput(),
     }
   }
-  shortoutput() : any {
-    return { id: this.id, 
-      title: this.title,
-      descr: this.descr
-    }
+  shortoutput(): any {
+    return { id: this.id, title: this.title, descr: this.descr }
   }
 
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id: string
 
   @Column()
-  title: string;
+  title: string
 
   @Column()
-  descr: string;
+  descr: string
 
   @Column({ type: 'boolean', default: true })
-  isDone: boolean;
+  isDone: boolean
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  createDateTime: Date;
+  createDateTime: Date
 
   @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  lastChangedDateTime: Date;
+  lastChangedDateTime: Date
 
-  @ManyToOne(type => User, user => user.todos)
-  @JoinColumn({ name: "userId" })
-  user: User;
+  @ManyToOne(() => User, (user) => user.todos)
+  @JoinColumn({ name: 'userId' })
+  user: User
 
-  @ManyToOne(type => Folder, folder => folder.todos)
-  @JoinColumn({ name: "folderId" })
-  folder: Folder;
-
+  @ManyToOne(() => Folder, (folder) => folder.todos)
+  @JoinColumn({ name: 'folderId' })
+  folder: Folder
 }

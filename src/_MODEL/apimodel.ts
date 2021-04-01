@@ -1,10 +1,7 @@
-
 export interface ApiModel {
+  id: string
+  hasOwner: boolean
 
-    id: string;
-    hasOwner: boolean;
-  
-    output: () => any;
-    shortoutput: () => any;
-  }
-  
+  output: () => any
+  shortoutput: () => any
+}

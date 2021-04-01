@@ -13,12 +13,13 @@ services:
     env_file:
       - .env.development
     depends_on:
-      - db-nest
+      - db
+      - redis
     ports:
       - '3000:3000'
     command: ['npm','start']
 
-  db-nest:
+  db:
     container_name: db-nest
     image: postgres:12-alpine
     env_file:
@@ -30,7 +31,29 @@ services:
           ipv4_address: 172.20.0.12
     volumes:
       - pgdata:/var/lib/postgresql/data
+    
+  redis:
+    container_name: redis-nest
+    image: redis:alpine
+    networks:
+      backend:
+          ipv4_address: 172.20.0.13
+    ports:
+      - "6379:6379"
 
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
+    networks:
+      frontend:
+        ipv4_address: 172.18.18.10
+      backend:
+        ipv4_address: 172.20.0.14
+    depends_on:
+        - redis
 
   proxy:
     container_name: webproxy

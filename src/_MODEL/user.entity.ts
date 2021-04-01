@@ -6,27 +6,24 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   OneToMany,
-  ManyToOne,
   ManyToMany,
-  JoinTable
-} from 'typeorm';
-import * as bcrypt from 'bcrypt';
-import { Todo } from './todo.entity';
-import { Folder } from './folder.entity';
-import { UserInputDto } from './_DTO/user.dto';
-import { ApiModel } from './apimodel';
-import { Chat } from './chat.entity';
-import { Message } from './message.entity';
-import { Gender } from '../_UTILS/enums/genders';
-import { Roles } from '../_UTILS/enums/roles';
+} from 'typeorm'
+import * as bcrypt from 'bcrypt'
+import { Todo } from './todo.entity'
+import { Folder } from './folder.entity'
+import { UserInputDto } from './_DTO/user.dto'
+import { ApiModel } from './apimodel'
+import { Chat } from './chat.entity'
+import { Message } from './message.entity'
+import { Gender } from '../_UTILS/enums/genders'
+import { Roles } from '../_UTILS/enums/roles'
 
 @Entity('user')
 export class User implements ApiModel {
+  hasOwner = false
+  inputDTO: UserInputDto
 
-  hasOwner = false;
-  inputDTO: UserInputDto;
-
-  static relations: string[] = ['todos', 'folders', 'folders.todos', 'chats'];
+  static relations: string[] = ['todos', 'folders', 'folders.todos', 'chats']
 
   output(): any {
     return {
@@ -42,9 +39,9 @@ export class User implements ApiModel {
           title: val.title,
           description: val.descr,
           todos: val.todos.length || 0,
-        };
+        }
       }),
-    };
+    }
   }
 
   shortoutput(): any {
@@ -52,58 +49,57 @@ export class User implements ApiModel {
       id: this.id,
       username: this.username,
       email: this.email,
-      photo: this.photo
-    };
+      photo: this.photo,
+    }
   }
 
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id: string
 
-  @Column()
-  username: string;
+  @Column({ nullable: false })
+  username: string
 
-  @Column()
-  password: string;
+  @Column({ nullable: false })
+  password: string
 
-  @Column({ unique: true })
-  email: string;
+  @Column({ unique: true, nullable: false })
+  email: string
 
-  @Column({ default:'o', nullable:false })
-  gender: Gender;
+  @Column({ default: 'o', nullable: false })
+  gender: Gender
 
-  @Column({ nullable:false })
-  role: Roles;
+  @Column({ nullable: false })
+  role: Roles
 
-  @Column({nullable: true, default: 'nophoto.jpg'})
-  photo: string;
+  @Column({ nullable: true, default: 'nophoto.jpg' })
+  photo: string
 
   @Column({ nullable: true })
-  refreshToken: string;
+  refreshToken: string
 
-  @Column({ type: 'boolean', default: true })
-  isActive: boolean;
+  @Column({ type: 'boolean', default: false })
+  isActive: boolean
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  createDateTime: Date;
+  createDateTime: Date
 
   @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  lastChangedDateTime: Date;
+  lastChangedDateTime: Date
 
   @OneToMany(() => Todo, (todo) => todo.user, { cascade: true })
-  todos: Todo[];
+  todos: Todo[]
 
   @OneToMany(() => Folder, (folder) => folder.user, { cascade: true })
-  folders: Folder[];
+  folders: Folder[]
 
   @ManyToMany(() => Chat, (chat) => chat.users, { eager: true })
-  chats: Chat[];
+  chats: Chat[]
 
-  @OneToMany( () => Message, message => message.user)
-  messages: Message[];
+  @OneToMany(() => Message, (message) => message.user)
+  messages: Message[]
 
   @BeforeInsert()
   async hashPassword() {
-    this.password = await bcrypt.hash(this.password, 10);
+    this.password = await bcrypt.hash(this.password, 10)
   }
-
 }

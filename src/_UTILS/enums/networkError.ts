@@ -1,6 +1,5 @@
-
 export enum NetwortError {
-    "badRequest",
-    "intenal",
-    "unauthorized"
+  'badRequest',
+  'intenal',
+  'unauthorized',
 }

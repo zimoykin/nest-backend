@@ -1,77 +1,82 @@
-import { sign as jwt } from "jsonwebtoken";
-import { FolderOutputDto } from "./folder.dto";
-import { Type } from "@nestjs/common";
-import { IsEmail, IsNotEmpty, IsString } from "class-validator";
-import { User } from "../user.entity";
+import { sign as jwt } from 'jsonwebtoken'
+import { FolderOutputDto } from './folder.dto'
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator'
+import { User } from '../user.entity'
 
 export class UserInputDto {
   @IsString()
   @IsNotEmpty()
-  username: string;
+  username: string
 
   @IsString()
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  email: string
 
   @IsNotEmpty()
   @IsString()
-  password: string;
+  password: string
 
   @IsString()
   @IsNotEmpty()
-  gender: string;
+  gender: string
 
   @IsString()
   @IsNotEmpty()
-  role: string;
+  role: string
 }
 
 export class UserOutputDto {
-    username: string;
-    email: string;
-    id: string;
-    folder: FolderOutputDto[];
+  username: string
+  email: string
+  id: string
+  folder: FolderOutputDto[]
 
-    public static output(user: User) : UserOutputDto {
-      return { id: user.id, email: user.email, username: user.username, folder: user.folders.map( val => { return val.shortoutput()}) }
+  public static output(user: User): UserOutputDto {
+    return {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      folder: user.folders.map((val) => {
+        return val.shortoutput()
+      }),
     }
+  }
 }
 
 export class UserSearchDto {
   @IsString()
-  username?: string;
+  username?: string
   @IsString()
   @IsEmail()
-  email?: string;
+  email?: string
 }
 
 export interface UserAccess {
-  id: string;
-  accessToken: string;
-  refreshToken: string;
+  id: string
+  accessToken: string
+  refreshToken: string
+}
+export class AcceptToken {
+  @IsString()
+  @IsNotEmpty()
+  id: string
+  @IsString()
+  @IsNotEmpty()
+  acceptToken: string
 }
 
 export class UserRefreshToken {
   @IsString()
   @IsNotEmpty()
-  refreshToken: string;
+  refreshToken: string
 }
 
-
 export const getAccess = (user: string): UserAccess => {
-  const jwt_secret = process.env.JWTSECRET;
+  const jwt_secret = process.env.JWTSECRET
 
-  let accessToken = jwt({ id: user }, jwt_secret, { expiresIn: "1h" });
-  let refreshToken = jwt({ id: user }, jwt_secret, { expiresIn: "24h" });
+  const accessToken = jwt({ id: user }, jwt_secret, { expiresIn: '1h' })
+  const refreshToken = jwt({ id: user }, jwt_secret, { expiresIn: '24h' })
 
-  return { id: user, accessToken: accessToken, refreshToken: refreshToken };
-};
-
-
-
-export interface ArgumentMetadata<T> {
-  type: 'body' | 'query' | 'param' | 'custom';
-  metatype?: Type<Type>;
-  data?: string;
+  return { id: user, accessToken: accessToken, refreshToken: refreshToken }
 }

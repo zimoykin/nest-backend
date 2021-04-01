@@ -13,6 +13,7 @@ export const config: TypeOrmModuleOptions = {
   password: POSTGRES_PASSWORD,
   database: POSTGRES_DB,
   synchronize: false,
+  logging: process.env.NODE_ENV == 'production' ? ['error'] : ['query', 'error'],
   entities: [
     __dirname + "/src/_MODEL/*.entity{.ts,.js}"
   ],

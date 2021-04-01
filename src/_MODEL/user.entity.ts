@@ -52,6 +52,7 @@ export class User implements ApiModel {
       id: this.id,
       username: this.username,
       email: this.email,
+      photo: this.photo
     };
   }
 

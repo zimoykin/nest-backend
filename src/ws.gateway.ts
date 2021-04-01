@@ -21,7 +21,9 @@ export class WsGateway
   server: Server;
   clients = new Array<SocketClient>();
 
-  constructor(private users: UsersService) {}
+  constructor(
+    private users: UsersService
+    ) {}
 
   handleConnection(client: Socket) {
     if (client.handshake.query.token) {

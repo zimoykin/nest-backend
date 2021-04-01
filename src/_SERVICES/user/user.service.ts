@@ -21,7 +21,7 @@ import * as jwt from 'jsonwebtoken'
 @Injectable()
 export class UsersService extends ModelService(User, User.relations) {
   login(email: string, password: string): Promise<User> {
-    return this.readRaw({ email: email }).then((user) => {
+    return this.readRaw({ email: email, isActive: true }).then((user) => {
       if (user) {
         return bcrypt.compare(password, user.password).then((ismatch) => {
           if (ismatch) {
@@ -39,7 +39,7 @@ export class UsersService extends ModelService(User, User.relations) {
 
   refresh(refresh: UserRefreshToken) {
     return new Promise((resolve) => {
-      this.read({ refresh }).then((user) => {
+      this.read({ refresh, isActive: true }).then((user) => {
         resolve(user)
       })
     })
@@ -47,7 +47,6 @@ export class UsersService extends ModelService(User, User.relations) {
 
   createOne(payload: UserInputDto): Promise<User> {
     const user = this.repository.create({
-      isActive: true,
       username: payload.username,
       email: payload.email,
       password: payload.password,
@@ -90,8 +89,11 @@ export class UsersService extends ModelService(User, User.relations) {
           console.log(err)
           reject(err)
         } else {
-          const user = await this.readRaw({ id: payload.id })
-          if (!user) reject('user not found')
+          const user = await this.readRaw({ id: payload.id, isActive: true })
+          if (!user) {
+            reject('user not found')
+            return
+          }
           resolve(user)
         }
       })

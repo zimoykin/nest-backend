@@ -6,7 +6,7 @@ import { UserController } from '../../_CONTROLLER/user.controller'
 import { User } from '../../_MODEL/user.entity'
 import { UserProtectedController } from '../../_CONTROLLER/user-protected.controller'
 
-const { REDIS } = process.env;
+const { REDIS } = process.env
 
 @Module({
   imports: [

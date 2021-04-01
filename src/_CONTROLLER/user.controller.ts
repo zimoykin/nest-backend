@@ -6,7 +6,6 @@ import {
   HttpStatus,
   Inject,
   NotFoundException,
-  Param,
   Post,
   UseGuards,
   ValidationPipe,
@@ -73,7 +72,6 @@ export class UserController {
   async confirm(
     @Body(new ValidationPipe()) input: AcceptToken
   ): Promise<UserAccess> {
-
     return new Promise((resolve, reject) => {
       this.cacheManager.get(input.id, (err: Error, res: string) => {
         if (err) {

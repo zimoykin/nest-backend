@@ -13,16 +13,18 @@ import {
 import { User } from './user.entity'
 import { ApiModel } from './apimodel'
 import { Message } from './message.entity'
+import { Folder } from './folder.entity'
 
 @Entity('chat')
 export class Chat implements ApiModel {
   hasOwner = false
-  static relations = ['users', 'admin']
+  static relations = ['users', 'admin', 'folder']
 
   output(): any {
     return {
       id: this.id,
       title: this.title,
+      folder: this.folder.shortoutput(),
       settings: this.settings,
       admin: this.admin.shortoutput(),
       users: this.users.map((val) => {
@@ -34,6 +36,7 @@ export class Chat implements ApiModel {
     return {
       id: this.id,
       title: this.title,
+      folder: this.folder.shortoutput(),
       users: this.users.map((val) => {
         return val.shortoutput()
       }),
@@ -58,6 +61,10 @@ export class Chat implements ApiModel {
   @ManyToOne(() => User, (user) => user.folders)
   @JoinColumn({ name: 'userId' })
   admin: User
+
+  @ManyToOne(() => Folder, (folder) => folder)
+  @JoinColumn({ name: 'folderId' })
+  folder: Folder
 
   @OneToMany(() => Message, (message) => message.chat)
   messages: Chat[]

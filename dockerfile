@@ -11,4 +11,4 @@ RUN apk add --no-cache make gcc g++ python && \
   npm rebuild bcrypt --build-from-source && \
   npm rebuild child_process --build-from-source
 
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start", "--", "--m"]

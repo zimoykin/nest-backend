@@ -11,7 +11,7 @@ import {
   Type,
   ValidationPipe,
 } from '@nestjs/common'
-import { Crud } from '../_SERVICES/Crud.service'
+import { Crud } from '../_SERVICES/crud.service'
 import { Service } from '../_SERVICES/DefaultService/default.service'
 
 type Constructor<T> = new (...args: any[]) => T

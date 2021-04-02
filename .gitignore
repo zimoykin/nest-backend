@@ -38,3 +38,5 @@ src/migration/*
 
 playground.ts
 uploads/photos/*
+.env
+.env.development

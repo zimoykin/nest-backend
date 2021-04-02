@@ -14,7 +14,6 @@ import { Chat } from './chat.entity'
 @Entity('message')
 export class Message implements ApiModel {
   hasOwner = true
-
   static relations = ['chat', 'user', 'chat.users']
 
   output(): any {

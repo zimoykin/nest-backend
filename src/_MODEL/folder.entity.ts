@@ -15,7 +15,6 @@ import { User } from './user.entity'
 @Entity('folder')
 export class Folder implements ApiModel {
   hasOwner = true
-
   static relations = ['todos', 'user', 'user.todos', 'todos.user']
 
   output(): any {

@@ -1,9 +1,10 @@
 import { IsString } from 'class-validator'
 import { getRepository, In } from 'typeorm'
 import { User } from '../user.entity'
+import { CrudDto } from './crud.dto'
 import { UserOutputDto } from './user.dto'
 
-export class ChatDto {
+export class ChatDto implements CrudDto {
   @IsString() title: string
   settings: any
   users?: string[]

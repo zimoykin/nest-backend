@@ -15,7 +15,7 @@ import { MessageModule } from './_SERVICES/message/message.module'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { join } from 'path'
 import { ScheduleModule } from '@nestjs/schedule'
-import { JobberService } from './_SERVICES/jobber/jobber.service';
+import { AppointmentModule } from './_SERVICES/appointment/appointment.module'
 
 const modules = [
   TypeOrmModule.forRoot(config),
@@ -24,6 +24,7 @@ const modules = [
   FolderModule,
   ChatModule,
   MessageModule,
+  AppointmentModule,
   ScheduleModule.forRoot(),
   ServeStaticModule.forRoot({
     rootPath: join(__dirname, '..', 'uploads'),
@@ -34,7 +35,7 @@ const modules = [
 @Module({
   imports: modules,
   controllers: [AppController],
-  providers: [AppService, WsGateway, JobberService],
+  providers: [AppService, WsGateway],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
@@ -45,7 +46,8 @@ export class AppModule {
         'api/folder',
         'api/todo',
         'api/chat',
-        'api/message'
+        'api/message',
+        'api/appointment'
       )
       .apply(LoggerMiddleware)
       .forRoutes('/')

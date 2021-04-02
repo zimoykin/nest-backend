@@ -17,6 +17,7 @@ import { Chat } from './chat.entity'
 import { Message } from './message.entity'
 import { Gender } from '../_UTILS/enums/genders'
 import { Roles } from '../_UTILS/enums/roles'
+import { Appointment } from './appointment.entity'
 
 @Entity('user')
 export class User implements ApiModel {
@@ -94,6 +95,9 @@ export class User implements ApiModel {
 
   @ManyToMany(() => Chat, (chat) => chat.users, { eager: true })
   chats: Chat[]
+
+  @ManyToMany(() => Appointment, (meet) => meet.members, { eager: true })
+  appointments: Appointment[]
 
   @OneToMany(() => Message, (message) => message.user)
   messages: Message[]

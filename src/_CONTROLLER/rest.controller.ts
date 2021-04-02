@@ -11,6 +11,7 @@ import {
   Type,
   ValidationPipe,
 } from '@nestjs/common'
+import { ApiModel } from 'src/_MODEL/apimodel'
 import { Crud } from '../_SERVICES/crud.service'
 import { Service } from '../_SERVICES/DefaultService/default.service'
 

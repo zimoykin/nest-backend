@@ -58,7 +58,7 @@ export class Chat implements ApiModel {
   @Column({ name: 'settings', type: 'jsonb' })
   settings: any
 
-  @ManyToOne(() => User, (user) => user.folders)
+  @ManyToOne(() => User, (user) => user)
   @JoinColumn({ name: 'userId' })
   admin: User
 

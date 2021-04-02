@@ -21,18 +21,38 @@
 </p>
 
 <h3>$ touch .env</h3>
-<p align="center">
-DB_HOST=localhost
+<p align="left">
+  DB_HOST=localhost
+</p>
+<p align="left">
 REDIS=localhost
+</p>
+<p align="left">
 DB_PORT=5434
+</p>
+<p align="left">
 POSTGRES_PASSWORD=password
+</p>
+<p align="left">
 POSTGRES_USER=username
+</p>
+<p align="left">
 POSTGRES_DB=database
+</p>
+<p align="left">
 PG_DATA=/var/lib/postgresql/data
+</p>
+<p align="left">
 MODE=PROD
-
+</p>
+<p align="left">
 mailserver=MAILSERVER
+</p>
+<p align="left">
 mailAPI=APIKEY
-
+</p>
+<p align="left">
 JWTSECRET=SECRETHERE
+</p>
+<p align="left">
 </p>

@@ -17,7 +17,7 @@ export class AppointmentController extends RestController(AppointmentService) {
         @Body(new ValidationPipe()) input: AppointmentDto,
         @Req() req: any
       ): Promise<Appointment> {
-        return this.service.createMeet(input, req.user)
+        return this.service.checkAdnCreateMeet(input, req.user)
       }
 
       

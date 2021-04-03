@@ -1,4 +1,6 @@
 import { IsArray, IsBoolean, IsDateString, IsNumber, IsString } from 'class-validator'
+import { getRepository, In } from 'typeorm'
+import { User } from '../user.entity'
 import { CrudDto } from './crud.dto'
 
 export class AppointmentDto implements CrudDto {
@@ -13,7 +15,15 @@ export class AppointmentDto implements CrudDto {
   @IsNumber() 
   room: number
   @IsArray()
-  members: [string]
+  users: [string]
   @IsDateString()
   appointmentTime: string
+
+  //TODO: move to user dto
+  static async getUsers(ids: string[]): Promise<User[]> {
+    return getRepository(User).find({
+      where: { id: In(ids) },
+    })
+  }
+  
 }

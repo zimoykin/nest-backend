@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common'
-import { AppointmentDto } from 'src/_MODEL/_DTO/appointment.dto'
+import { User } from '../../_MODEL/user.entity'
+import { AppointmentDto } from '../../_MODEL/_DTO/appointment.dto'
+import { getRepository } from 'typeorm'
 import { Appointment } from '../../_MODEL/appointment.entity'
 import { ModelService } from '../DefaultService/default.service'
 
@@ -9,42 +11,64 @@ export class AppointmentService extends ModelService(
   Appointment.relations
 ) {
 
-  async createMeet(input: AppointmentDto, req: any):Promise<Appointment> {
+  async checkAdnCreateMeet(input: AppointmentDto, user: User):Promise<any> {
 
     //1 check 
     if (!input.isOnline) {
-
       const meetDate = new Date(input.appointmentTime)
       const res = await this.repository.createQueryBuilder('meet')
       .select()
       .where('meet.room = :room', {room: input.room})
-      .andWhere('meet. "appointmentTime" BETWEEN :date_from AND :date_to', 
-        { date_from:  meetDate.toISOString(), 
+      .andWhere(`
+          meet."appointmentTime" <= :date_to 
+          AND :date_from <= (meet."appointmentTime" + meet.duration * interval '1 minute')  
+        `, { date_from: meetDate.toISOString(), 
           date_to: new Date (meetDate.setMinutes(meetDate.getMinutes() + input.duration)).toISOString() 
         })
       .getOne()
-
-      if (!res) { 
-        console.log('not occupied')
+      //2 create
+      if (res === undefined) { 
+        return this.createMeet(input, user)
       } else {
-        console.log('occupied')
+        return {status: 'occupied'}
       }
+    } else {
+      //create online meet
+      this.createMeet(input, user)
     }
 
-    return 
+  }
+
+  private async createMeet(input: AppointmentDto, user: User):Promise<any>{
+
+    const repo = getRepository(Appointment)
+    const userRepo = getRepository(User)
+    
+    let meet:Appointment = new Appointment()
+
+    for (let key in input) {
+      meet[key] = input[key]
+    }
+    meet.owner = user
+
+    //TODO: ???? 
+    meet.appointmentTime = new Date(new Date(input.appointmentTime).toUTCString())
+
+    meet.members = await AppointmentDto.getUsers(input.users)
+
+    return (await repo.save(meet)).output()
 
   }
 
 }
 
-
-
-
 // SELECT
-// 	Count(meet.id) > 0 AS occupied
+// 	"meet"."id" AS "meet_id",
+// 	meet. "appointmentTime" AS "START",
+// 	meet. "appointmentTime" + "meet"."duration" * interval '1 minute' AS "END"
 // FROM
-// 	appointment AS meet
+// 	"appointment" AS "meet"
 // WHERE
 // 	meet.room = 1
-// 	AND(meet. "appointmentTime" BETWEEN CURRENT_TIMESTAMP
-// 		AND CURRENT_TIMESTAMP + 30 * interval '1 minute');
+// 	AND meet. "appointmentTime" <= '2021-04-02 23:09:42.937106'
+// 	AND '2021-04-02 19:30:52.937106'<= (meet. "appointmentTime" + "meet"."duration" * interval '1 minute')

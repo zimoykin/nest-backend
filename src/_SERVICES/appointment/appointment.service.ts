@@ -42,7 +42,6 @@ export class AppointmentService extends ModelService(
   private async createMeet(input: AppointmentDto, user: User):Promise<any>{
 
     const repo = getRepository(Appointment)
-    const userRepo = getRepository(User)
     
     let meet:Appointment = new Appointment()
 
@@ -51,12 +50,25 @@ export class AppointmentService extends ModelService(
     }
     meet.owner = user
 
-    //TODO: ???? 
+    //FIXME: ???? 
     meet.appointmentTime = new Date(new Date(input.appointmentTime).toUTCString())
 
     meet.members = await AppointmentDto.getUsers(input.users)
 
+    //TODO:Email ntfy here
     return (await repo.save(meet)).output()
+
+  }
+
+
+  async readMy(user: User):Promise<any> {
+
+    return this.repository.createQueryBuilder('meet')
+    .distinct()
+    .leftJoinAndSelect('meet.owner', 'owner')
+    .leftJoinAndSelect('meet.members','members')
+    .where('meet.owner.id = :userid OR members.id = :userid', {userid: user.id})
+    .getMany().then( vals => vals.map(val => val.output()))
 
   }
 

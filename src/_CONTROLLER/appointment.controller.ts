@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, ValidationPipe } from '@nestjs/common'
+import { Body, Controller, Get, Post, Req, ValidationPipe } from '@nestjs/common'
 import { AppointmentDto } from '../_MODEL/_DTO/appointment.dto'
 import { WsGateway } from '../ws.gateway'
 import { AppointmentService } from '../_SERVICES/appointment/appointment.service'
@@ -18,6 +18,11 @@ export class AppointmentController extends RestController(AppointmentService) {
         @Req() req: any
       ): Promise<Appointment> {
         return this.service.checkAdnCreateMeet(input, req.user)
+      }
+
+      @Get('')
+      readMyMeet( @Req() req: any): Promise<Appointment> {
+        return this.service.readMy(req.user)
       }
 
       

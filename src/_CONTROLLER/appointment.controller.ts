@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Post, Req, ValidationPipe } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  ValidationPipe,
+} from '@nestjs/common'
 import { AppointmentDto } from '../_MODEL/_DTO/appointment.dto'
 import { WsGateway } from '../ws.gateway'
 import { AppointmentService } from '../_SERVICES/appointment/appointment.service'
@@ -7,23 +14,20 @@ import { Appointment } from '../_MODEL/appointment.entity'
 
 @Controller('api/appointment')
 export class AppointmentController extends RestController(AppointmentService) {
+  constructor(public service: AppointmentService) {
+    super()
+  }
 
-    constructor(public service: AppointmentService) {
-        super()
-      }
-    
-      @Post('')
-      createMessage(
-        @Body(new ValidationPipe()) input: AppointmentDto,
-        @Req() req: any
-      ): Promise<Appointment> {
-        return this.service.checkAdnCreateMeet(input, req.user)
-      }
+  @Post('')
+  createMessage(
+    @Body(new ValidationPipe()) input: AppointmentDto,
+    @Req() req: any
+  ): Promise<Appointment> {
+    return this.service.checkAdnCreateMeet(input, req.user)
+  }
 
-      @Get('')
-      readMyMeet( @Req() req: any): Promise<Appointment> {
-        return this.service.readMy(req.user)
-      }
-
-      
+  @Get('')
+  readMyMeet(@Req() req: any): Promise<Appointment> {
+    return this.service.readMy(req.user)
+  }
 }

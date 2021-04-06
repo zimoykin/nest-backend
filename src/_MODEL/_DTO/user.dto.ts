@@ -3,8 +3,9 @@ import { FolderOutputDto } from './folder.dto'
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator'
 import { User } from '../user.entity'
 import { CrudDto } from './crud.dto'
+import { getRepository, In } from 'typeorm'
 
-export class UserInputDto implements CrudDto {
+export class UserDto implements CrudDto {
   @IsString()
   @IsNotEmpty()
   username: string
@@ -25,6 +26,12 @@ export class UserInputDto implements CrudDto {
   @IsString()
   @IsNotEmpty()
   role: string
+
+  static async getUsers(ids: string[]): Promise<User[]> {
+    return getRepository(User).find({
+      where: { id: In(ids) },
+    })
+  }
 }
 
 export class UserOutputDto {

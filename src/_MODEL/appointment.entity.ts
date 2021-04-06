@@ -50,7 +50,7 @@ export class Appointment implements ApiModel {
   @Column()
   description: string
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   result: string
 
   @Column({ nullable: false })
@@ -59,7 +59,7 @@ export class Appointment implements ApiModel {
   @Column({ default: 0 })
   room: number
 
-  @Column({ nullable: false, type: 'timestamptz'})
+  @Column({ nullable: false, type: 'timestamptz' })
   appointmentTime: Date
 
   @Column({ default: 30 })

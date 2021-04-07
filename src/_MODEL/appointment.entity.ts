@@ -10,6 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm'
 import { ApiModel } from './apimodel'
+import { Room } from './room.entity'
 import { User } from './user.entity'
 
 @Entity('appointment')
@@ -56,8 +57,8 @@ export class Appointment implements ApiModel {
   @Column({ nullable: false })
   isOnline: boolean
 
-  @Column({ default: 0 })
-  room: number
+  @Column()
+  room: Room
 
   @Column({ nullable: false, type: 'timestamptz' })
   appointmentTime: Date

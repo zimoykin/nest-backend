@@ -16,6 +16,7 @@ import { ServeStaticModule } from '@nestjs/serve-static'
 import { join } from 'path'
 import { ScheduleModule } from '@nestjs/schedule'
 import { AppointmentModule } from './_SERVICES/appointment/appointment.module'
+import { RoomModule } from './room/room.module';
 
 const modules = [
   TypeOrmModule.forRoot(config),

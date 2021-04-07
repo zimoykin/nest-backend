@@ -20,36 +20,9 @@ import { Appointment } from './appointment.entity'
 
 @Entity('user')
 export class User implements ApiModel {
+
   hasOwner = false
   static relations: string[] = ['todos', 'folders', 'folders.todos', 'chats']
-
-  output(): any {
-    return {
-      id: this.id,
-      username: this.username,
-      email: this.email,
-      gender: this.gender,
-      role: this.role,
-      photo: this.photo,
-      folder: this.folders.map((val) => {
-        return {
-          id: val.id,
-          title: val.title,
-          description: val.descr,
-          todos: val.todos.length || 0,
-        }
-      }),
-    }
-  }
-
-  shortoutput(): any {
-    return {
-      id: this.id,
-      username: this.username,
-      email: this.email,
-      photo: this.photo,
-    }
-  }
 
   @PrimaryGeneratedColumn('uuid')
   id: string
@@ -103,4 +76,33 @@ export class User implements ApiModel {
   async hashPassword() {
     this.password = await bcrypt.hash(this.password, 10)
   }
+
+  output(): any {
+    return {
+      id: this.id,
+      username: this.username,
+      email: this.email,
+      gender: this.gender,
+      role: this.role,
+      photo: this.photo,
+      folder: this.folders.map((val) => {
+        return {
+          id: val.id,
+          title: val.title,
+          description: val.descr,
+          todos: val.todos.length || 0,
+        }
+      }),
+    }
+  }
+
+  shortoutput(): any {
+    return {
+      id: this.id,
+      username: this.username,
+      email: this.email,
+      photo: this.photo,
+    }
+  }
+
 }

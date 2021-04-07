@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { getRepository, Repository } from 'typeorm'
 import { HttpException, Type } from '@nestjs/common'
 import { User } from '../../_MODEL/user.entity'
 import { ApiModel } from '../../_MODEL/apimodel'
@@ -12,6 +12,7 @@ export class Service<T> {
   update: (id: string, input: any | any) => Promise<T>
   create: (input: any, user: User) => Promise<T>
   delete: (id: string) => Promise<any>
+  default_model: () => string
 }
 
 type Constructor<I> = new (...args: any[]) => I
@@ -21,8 +22,10 @@ export function ModelService<T extends ApiModel>(
   relations: string[]
 ): Type<Service<T>> {
   class DataServiceHost implements Service<T> {
+    // 
+    // public repository: Repository<T>
     @InjectRepository(entity)
-    public repository: Repository<T>
+    repository = getRepository(entity)
 
     public async read(query: any): Promise<T> {
       try {
@@ -33,7 +36,6 @@ export function ModelService<T extends ApiModel>(
         return err
       }
     }
-
     public async readAll(query: any): Promise<T[]> {
       return (
         await this.repository.find({ where: query, relations: relations })
@@ -41,11 +43,9 @@ export function ModelService<T extends ApiModel>(
         return val.output()
       })
     }
-
     public async readRaw(query: any): Promise<T> {
       return this.repository.findOne({ where: query })
     }
-
     public async update(id: string, input: any): Promise<T> {
       return this.repository.update(id, input).then(() => {
         return this.repository
@@ -55,7 +55,6 @@ export function ModelService<T extends ApiModel>(
           })
       })
     }
-
     public async create(input: any, user: User): Promise<T> {
       try {
         const data = await this.repository
@@ -80,11 +79,13 @@ export function ModelService<T extends ApiModel>(
         throw new HttpException(err.message, 400)
       }
     }
-
     public async delete(id: string): Promise<any> {
       return this.repository.delete(id).then(() => {
         return { deleted: id }
       })
+    }
+    default_model(): string {
+      return entity.name
     }
   }
 

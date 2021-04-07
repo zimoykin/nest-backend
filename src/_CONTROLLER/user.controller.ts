@@ -1,6 +1,7 @@
 import {
   Body,
   CACHE_MANAGER,
+  ConflictException,
   Controller,
   HttpException,
   HttpStatus,
@@ -51,21 +52,32 @@ export class UserController {
   }
 
   @Post('register')
-  @UseGuards(NewUserGuard)
   async register(
     @Body(new ValidationPipe()) payload: UserDto
   ): Promise<AcceptToken> {
-    const user = await this.userservice.createOne(payload)
-    const accept = this.userservice.toAccept(user)
-    return this.cacheManager
-      .set(user.id, JSON.stringify(accept))
-      .then(() => {
-        return accept
-      })
-      .catch((err) => {
-        console.log(err)
-        throw new HttpException(err.message, 400)
-      })
+
+    //check user before
+    let userExist = await this.userservice.readRaw({email:payload.email})
+    if (userExist) throw new ConflictException('this email address has been registered early.')
+
+    return this.userservice.createOne(payload)
+    .then( created => {
+      let accept = this.userservice.toAccept(created)
+       return this.cacheManager
+       .set(created.id, JSON.stringify(accept))
+       .then( () => {
+         return accept
+       })
+       .catch((err) => {
+         console.log(err)
+         throw new HttpException(err.message, 400)
+       })
+    })
+    .catch( err => {
+      console.log(err)
+      throw new HttpException(err.message, 400)
+    })
+  
   }
 
   @Post('/accept')

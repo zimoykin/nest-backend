@@ -1,6 +1,6 @@
 import { sign as jwt } from 'jsonwebtoken'
 import { FolderOutputDto } from './folder.dto'
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator'
+import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator'
 import { User } from '../user.entity'
 import { getRepository, In } from 'typeorm'
 
@@ -16,6 +16,7 @@ export class UserDto {
 
   @IsNotEmpty()
   @IsString()
+  @MinLength(5)
   password: string
 
   @IsString()

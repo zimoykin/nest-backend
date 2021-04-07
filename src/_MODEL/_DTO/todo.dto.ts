@@ -2,9 +2,8 @@ import { Folder } from '../folder.entity'
 import { FolderOutputDto } from './folder.dto'
 import { UserOutputDto } from './user.dto'
 import { IsBoolean, IsString } from 'class-validator'
-import { CrudDto } from './crud.dto'
 
-export class TodoInputDto implements CrudDto {
+export class TodoInputDto {
   @IsString()
   title: string
   @IsString()

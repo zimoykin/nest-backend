@@ -1,8 +1,7 @@
 import { IsString } from 'class-validator'
-import { CrudDto } from './crud.dto'
 import { UserOutputDto } from './user.dto'
 
-export class FolderDto implements CrudDto {
+export class FolderDto {
   @IsString()
   title: string
   @IsString()

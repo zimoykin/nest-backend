@@ -7,8 +7,8 @@ import {
 import {
   AcceptToken,
   UserAccess,
-  UserInputDto,
   UserRefreshToken,
+  UserDto,
 } from '../../_MODEL/_DTO/user.dto'
 import { User } from '../../_MODEL/user.entity'
 import * as bcrypt from 'bcrypt'
@@ -45,7 +45,7 @@ export class UsersService extends ModelService(User, User.relations) {
     })
   }
 
-  createOne(payload: UserInputDto): Promise<User> {
+  createOne(payload: UserDto): Promise<User> {
     const user = this.repository.create({
       username: payload.username,
       email: payload.email,

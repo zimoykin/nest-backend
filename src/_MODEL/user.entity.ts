@@ -11,7 +11,6 @@ import {
 import * as bcrypt from 'bcrypt'
 import { Todo } from './todo.entity'
 import { Folder } from './folder.entity'
-import { UserInputDto } from './_DTO/user.dto'
 import { ApiModel } from './apimodel'
 import { Chat } from './chat.entity'
 import { Message } from './message.entity'
@@ -22,8 +21,6 @@ import { Appointment } from './appointment.entity'
 @Entity('user')
 export class User implements ApiModel {
   hasOwner = false
-  inputDTO: UserInputDto
-
   static relations: string[] = ['todos', 'folders', 'folders.todos', 'chats']
 
   output(): any {

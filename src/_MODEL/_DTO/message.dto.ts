@@ -1,8 +1,7 @@
 import { IsString } from 'class-validator'
 import { MessageType } from '../../_UTILS/enums/MessageType'
-import { CrudDto } from './crud.dto'
 
-export class MessageDTO implements CrudDto {
+export class MessageDTO {
   @IsString()
   chatid: string
   @IsString()

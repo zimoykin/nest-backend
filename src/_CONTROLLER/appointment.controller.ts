@@ -7,7 +7,6 @@ import {
   ValidationPipe,
 } from '@nestjs/common'
 import { AppointmentDto } from '../_MODEL/_DTO/appointment.dto'
-import { WsGateway } from '../ws.gateway'
 import { AppointmentService } from '../_SERVICES/appointment/appointment.service'
 import { RestController } from './rest.controller'
 import { Appointment } from '../_MODEL/appointment.entity'

@@ -2,10 +2,9 @@ import { sign as jwt } from 'jsonwebtoken'
 import { FolderOutputDto } from './folder.dto'
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator'
 import { User } from '../user.entity'
-import { CrudDto } from './crud.dto'
 import { getRepository, In } from 'typeorm'
 
-export class UserDto implements CrudDto {
+export class UserDto {
   @IsString()
   @IsNotEmpty()
   username: string
@@ -65,7 +64,7 @@ export interface UserAccess {
   accessToken: string
   refreshToken: string
 }
-export class AcceptToken implements CrudDto {
+export class AcceptToken {
   @IsString()
   @IsNotEmpty()
   id: string

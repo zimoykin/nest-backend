@@ -14,7 +14,7 @@ import { NewUserGuard } from '../_UTILS/guards/newUser.guard'
 import {
   AcceptToken,
   UserAccess,
-  UserInputDto,
+  UserDto,
   UserRefreshToken,
 } from '../_MODEL/_DTO/user.dto'
 import { UsersService } from '../_SERVICES/user/user.service'
@@ -30,7 +30,7 @@ export class UserController {
   ) {}
 
   @Post('/login')
-  async login(@Body() userdto: UserInputDto) {
+  async login(@Body() userdto: UserDto) {
     const access = await this.userservice.login(userdto.email, userdto.password)
     if (!access) {
       throw ServerError(NetwortError.badRequest)
@@ -53,7 +53,7 @@ export class UserController {
   @Post('register')
   @UseGuards(NewUserGuard)
   async register(
-    @Body(new ValidationPipe()) payload: UserInputDto
+    @Body(new ValidationPipe()) payload: UserDto
   ): Promise<AcceptToken> {
     const user = await this.userservice.createOne(payload)
     const accept = this.userservice.toAccept(user)

@@ -13,6 +13,7 @@ export class Mail {
         from: process.env.MAIL_LOGIN,
         subject: subject,
         sender: process.env.MAIL_LOGIN,
+        //TODO: html form for this
         html: '<h3>Hello! Company LLC </h3>' + '<hr>' + body
       })
       .then(() => {

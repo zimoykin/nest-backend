@@ -1,6 +1,11 @@
 import { InjectRepository } from '@nestjs/typeorm'
 import { getRepository, Repository } from 'typeorm'
-import { HttpException, Type } from '@nestjs/common'
+import {
+  BadRequestException,
+  HttpException,
+  NotFoundException,
+  Type,
+} from '@nestjs/common'
 import { User } from '../../_MODEL/user.entity'
 import { ApiModel } from '../../_MODEL/apimodel'
 
@@ -22,7 +27,7 @@ export function ModelService<T extends ApiModel>(
   relations: string[]
 ): Type<Service<T>> {
   class DataServiceHost implements Service<T> {
-    // 
+    //
     // public repository: Repository<T>
     @InjectRepository(entity)
     repository = getRepository(entity)
@@ -32,8 +37,8 @@ export function ModelService<T extends ApiModel>(
         return (
           await this.repository.findOne({ where: query, relations: relations })
         ).output()
-      } catch (err) {
-        return err
+      } catch {
+        throw new NotFoundException(`not found ${this.default_model()}`)
       }
     }
     public async readAll(query: any): Promise<T[]> {
@@ -47,13 +52,21 @@ export function ModelService<T extends ApiModel>(
       return this.repository.findOne({ where: query })
     }
     public async update(id: string, input: any): Promise<T> {
-      return this.repository.update(id, input).then(() => {
-        return this.repository
-          .findOne(id, { relations: relations })
-          .then((val) => {
-            return val.shortoutput()
-          })
-      })
+      return this.repository
+        .update(id, input)
+        .then(() => {
+          return this.repository
+            .findOne(id, { relations: relations })
+            .then((val) => {
+              return val.shortoutput()
+            })
+            .catch((err) => {
+              throw new NotFoundException(err.message)
+            })
+        })
+        .catch((err) => {
+          throw new BadRequestException(err.message)
+        })
     }
     public async create(input: any, user: User): Promise<T> {
       try {
@@ -80,9 +93,15 @@ export function ModelService<T extends ApiModel>(
       }
     }
     public async delete(id: string): Promise<any> {
-      return this.repository.delete(id).then(() => {
-        return { deleted: id }
-      })
+      console.log(this.default_model())
+      return this.repository
+        .delete(id)
+        .then(() => {
+          return { deleted: id }
+        })
+        .catch((err) => {
+          throw new BadRequestException(err.message)
+        })
     }
     default_model(): string {
       return entity.name

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { User } from '../../_MODEL/user.entity'
 import { AppointmentDto } from '../../_MODEL/_DTO/appointment.dto'
 import { Brackets, getRepository } from 'typeorm'
@@ -18,7 +18,7 @@ export class AppointmentService extends ModelService(
       const res = await this.repository
         .createQueryBuilder('meet')
         .select()
-        .where('meet.room = :room', { room: input.room })
+        .where('meet.room_id = :room', { room: input.room })
         .andWhere(
           `
           meet."appointmentTime" <= :date_to 
@@ -35,7 +35,7 @@ export class AppointmentService extends ModelService(
       if (res === undefined) {
         return this.createMeet(input, user)
       } else {
-        return { status: 'occupied' }
+        throw new BadRequestException('occupied')
       }
     } else {
       //create online meet

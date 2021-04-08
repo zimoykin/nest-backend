@@ -15,8 +15,8 @@ export class AppointmentDto {
   isOnline: boolean
   @IsNumber()
   duration: number
-  @IsNumber()
-  room: number
+  @IsString()
+  room: string
   @IsArray()
   users: [string]
   @IsDateString()

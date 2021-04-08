@@ -1,17 +1,28 @@
 import { sign as jwt } from 'jsonwebtoken'
 import { FolderOutputDto } from './folder.dto'
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator'
+import {
+  IsEmail,
+  IsEnum,
+  IsLowercase,
+  IsNotEmpty,
+  IsString,
+  MinLength,
+} from 'class-validator'
 import { User } from '../user.entity'
 import { getRepository, In } from 'typeorm'
+import { Gender } from '../../_UTILS/enums/genders'
+import { Roles } from '../../_UTILS/enums/roles'
 
 export class UserDto {
   @IsString()
   @IsNotEmpty()
+  @MinLength(4)
   username: string
 
   @IsString()
   @IsEmail()
   @IsNotEmpty()
+  @IsLowercase()
   email: string
 
   @IsNotEmpty()
@@ -21,10 +32,12 @@ export class UserDto {
 
   @IsString()
   @IsNotEmpty()
+  @IsEnum(Gender)
   gender: string
 
   @IsString()
   @IsNotEmpty()
+  @IsEnum(Roles)
   role: string
 
   static async getUsers(ids: string[]): Promise<User[]> {

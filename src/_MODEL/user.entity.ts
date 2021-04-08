@@ -20,7 +20,6 @@ import { Appointment } from './appointment.entity'
 
 @Entity('user')
 export class User implements ApiModel {
-
   hasOwner = false
   static relations: string[] = ['todos', 'folders', 'folders.todos', 'chats']
 
@@ -104,5 +103,4 @@ export class User implements ApiModel {
       photo: this.photo,
     }
   }
-
 }

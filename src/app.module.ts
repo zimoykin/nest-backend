@@ -16,16 +16,20 @@ import { ServeStaticModule } from '@nestjs/serve-static'
 import { join } from 'path'
 import { ScheduleModule } from '@nestjs/schedule'
 import { AppointmentModule } from './_SERVICES/appointment/appointment.module'
-import { RoomModule } from './room/room.module';
+import { RoomModule } from './_SERVICES/room/room.module'
+import { Mail } from './_SERVICES/mail/mail.service'
+import { MailModule } from './_SERVICES/mail/mail.module';
 
 const modules = [
   TypeOrmModule.forRoot(config),
   UsersModule,
   TodoModule,
+  RoomModule,
   FolderModule,
   ChatModule,
   MessageModule,
   AppointmentModule,
+  MailModule,
   ScheduleModule.forRoot(),
   ServeStaticModule.forRoot({
     rootPath: join(__dirname, '..', 'uploads'),
@@ -36,7 +40,7 @@ const modules = [
 @Module({
   imports: modules,
   controllers: [AppController],
-  providers: [AppService, WsGateway],
+  providers: [AppService, WsGateway, Mail],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
@@ -48,7 +52,8 @@ export class AppModule {
         'api/todo',
         'api/chat',
         'api/message',
-        'api/appointment'
+        'api/appointment',
+        'api/room'
       )
       .apply(LoggerMiddleware)
       .forRoutes('/')

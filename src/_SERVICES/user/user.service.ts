@@ -17,6 +17,7 @@ import { Gender } from '../../_UTILS/enums/genders'
 import { Roles } from '../../_UTILS/enums/roles'
 
 import * as jwt from 'jsonwebtoken'
+const { JWTSECRET } = process.env
 
 @Injectable()
 export class UsersService extends ModelService(User, User.relations) {
@@ -58,11 +59,10 @@ export class UsersService extends ModelService(User, User.relations) {
   }
 
   toAccess(user: User): Promise<UserAccess> {
-    const jwt_secret = process.env.JWTSECRET
     const access: UserAccess = {
       id: user.id,
-      accessToken: jwt.sign({ id: user.id }, jwt_secret, { expiresIn: '1h' }),
-      refreshToken: jwt.sign({ id: user.id }, jwt_secret, { expiresIn: '72h' }),
+      accessToken: jwt.sign({ id: user.id }, JWTSECRET, { expiresIn: '1h' }),
+      refreshToken: jwt.sign({ id: user.id }, JWTSECRET, { expiresIn: '72h' }),
     }
 
     return this.update(user.id, { refreshToken: access.refreshToken }).then(
@@ -73,18 +73,17 @@ export class UsersService extends ModelService(User, User.relations) {
   }
 
   toAccept(user: User): AcceptToken {
-    const jwt_secret = process.env.JWTSECRET
+  
     return {
       id: user.id,
-      acceptToken: jwt.sign({ id: user.id }, jwt_secret, { expiresIn: '5m' }),
+      acceptToken: jwt.sign({ id: user.id }, JWTSECRET, { expiresIn: '5m' }),
     }
   }
 
   async checkRefToken(ref: string): Promise<User> {
-    const jwt_secret = process.env.JWTSECRET
 
     return new Promise((resolve, reject) => {
-      jwt.verify(ref, jwt_secret, async (err, payload: any) => {
+      jwt.verify(ref, JWTSECRET, async (err, payload: any) => {
         if (err) {
           console.log(err)
           reject(err)

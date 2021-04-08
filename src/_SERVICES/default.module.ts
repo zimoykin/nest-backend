@@ -14,7 +14,7 @@ import { UsersModule } from './user/user.module'
     FolderService,
     ChatService,
     MessageService,
-    AppointmentService
+    AppointmentService,
   ],
   providers: [],
 })

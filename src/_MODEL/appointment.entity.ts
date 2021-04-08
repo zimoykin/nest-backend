@@ -16,7 +16,7 @@ import { User } from './user.entity'
 @Entity('appointment')
 export class Appointment implements ApiModel {
   hasOwner = true
-  static relations = ['owner', 'members']
+  static relations = ['owner', 'members', 'room']
 
   output() {
     return {
@@ -57,9 +57,6 @@ export class Appointment implements ApiModel {
   @Column({ nullable: false })
   isOnline: boolean
 
-  @Column()
-  room: Room
-
   @Column({ nullable: false, type: 'timestamptz' })
   appointmentTime: Date
 
@@ -75,6 +72,10 @@ export class Appointment implements ApiModel {
   @ManyToOne(() => User, (user) => user, { nullable: false })
   @JoinColumn({ name: 'userId' })
   owner: User
+
+  @ManyToOne(() => Room, (room) => room, { nullable: false })
+  @JoinColumn({ name: 'room_id' })
+  room: Room
 
   @ManyToMany(() => User, (user) => user.appointments, { cascade: false })
   @JoinTable({

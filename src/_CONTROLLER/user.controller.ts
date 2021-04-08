@@ -8,10 +8,8 @@ import {
   Inject,
   NotFoundException,
   Post,
-  UseGuards,
   ValidationPipe,
 } from '@nestjs/common'
-import { NewUserGuard } from '../_UTILS/guards/newUser.guard'
 import {
   AcceptToken,
   UserAccess,
@@ -22,11 +20,13 @@ import { UsersService } from '../_SERVICES/user/user.service'
 import { ServerError } from '../_UTILS/errors/ResponseError'
 import { NetwortError } from '../_UTILS/enums/networkError'
 import { Cache } from 'cache-manager'
+import { Mail } from '../_SERVICES/mail/mail.service'
 
 @Controller('api')
 export class UserController {
   constructor(
     private userservice: UsersService,
+    private mail: Mail,
     @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {}
 
@@ -55,29 +55,33 @@ export class UserController {
   async register(
     @Body(new ValidationPipe()) payload: UserDto
   ): Promise<AcceptToken> {
-
     //check user before
-    let userExist = await this.userservice.readRaw({email:payload.email})
-    if (userExist) throw new ConflictException('this email address has been registered early.')
+    const userExist = await this.userservice.readRaw({ email: payload.email })
+    if (userExist)
+      throw new ConflictException(
+        'this email address has been registered early.'
+      )
 
-    return this.userservice.createOne(payload)
-    .then( created => {
-      let accept = this.userservice.toAccept(created)
-       return this.cacheManager
-       .set(created.id, JSON.stringify(accept))
-       .then( () => {
-         return accept
-       })
-       .catch((err) => {
-         console.log(err)
-         throw new HttpException(err.message, 400)
-       })
-    })
-    .catch( err => {
-      console.log(err)
-      throw new HttpException(err.message, 400)
-    })
-  
+      //TODO: first save on redis and sent accept token on mail, save in postgres after account was accepted 
+    return this.userservice
+      .createOne(payload)
+      .then((created) => {
+        const accept = this.userservice.toAccept(created)
+        return this.cacheManager
+          .set(created.id, JSON.stringify(accept))
+          .then(() => {
+            this.mail.sendMail(created, 'accept your account', accept.acceptToken)
+            return accept
+          })
+          .catch((err) => {
+            console.log(err)
+            throw new HttpException(err.message, 400)
+          })
+      })
+      .catch((err) => {
+        console.log(err)
+        throw new HttpException(err.message, 400)
+      })
   }
 
   @Post('/accept')

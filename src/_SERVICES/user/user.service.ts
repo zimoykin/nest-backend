@@ -72,11 +72,10 @@ export class UsersService extends ModelService(User, User.relations) {
     )
   }
 
-  toAccept(user: User): AcceptToken {
-  
+  toAccept(payload: UserDto): AcceptToken {
     return {
-      id: user.id,
-      acceptToken: jwt.sign({ id: user.id }, JWTSECRET, { expiresIn: '5m' }),
+      email: payload.email,
+      acceptToken: jwt.sign({ email: payload.email }, JWTSECRET, { expiresIn: '5m' }),
     }
   }
 

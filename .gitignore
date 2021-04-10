@@ -37,6 +37,6 @@ lerna-debug.log*
 src/migration/*
 
 playground.ts
-uploads/photos/*
+uploads/*
 .env
 .env.development

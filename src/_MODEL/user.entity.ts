@@ -35,7 +35,7 @@ export class User implements ApiModel {
   @Column({ unique: true, nullable: false })
   email: string
 
-  @Column({ default: 'o', nullable: false })
+  @Column({ default: Gender.other, nullable: false })
   gender: Gender
 
   @Column({ nullable: false })
@@ -47,7 +47,7 @@ export class User implements ApiModel {
   @Column({ nullable: true })
   refreshToken: string
 
-  @Column({ type: 'boolean', default: false })
+  @Column({ type: 'boolean', default: true })
   isActive: boolean
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })

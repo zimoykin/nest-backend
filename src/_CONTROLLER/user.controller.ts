@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common'
 import {
   AcceptToken,
+  CacheUser,
   UserAccess,
   UserDto,
   UserRefreshToken,
@@ -58,30 +59,23 @@ export class UserController {
     //check user before
     const userExist = await this.userservice.readRaw({ email: payload.email })
     if (userExist)
-      throw new ConflictException(
-        'this email address has been registered early.'
-      )
-
-      //TODO: first save on redis and sent accept token on mail, save in postgres after account was accepted 
-    return this.userservice
-      .createOne(payload)
-      .then((created) => {
-        const accept = this.userservice.toAccept(created)
-        return this.cacheManager
-          .set(created.id, JSON.stringify(accept))
-          .then(() => {
-            this.mail.sendMail(created, 'accept your account', accept.acceptToken)
-            return accept
+    throw new ConflictException(
+      'this email address has been registered early.'
+    )
+    const accept = this.userservice.toAccept(payload)
+    const cachedUser: CacheUser = { accept: accept, payload: payload}
+    return this.cacheManager
+          .set(payload.email, JSON.stringify(cachedUser))
+          .then( () => {
+            return this.mail.sendMail(payload.email, 'accept your account', accept.acceptToken)
+            .then ( () => accept)
+            .catch( err => { throw new HttpException(err.message, 404)})
           })
           .catch((err) => {
             console.log(err)
             throw new HttpException(err.message, 400)
           })
-      })
-      .catch((err) => {
-        console.log(err)
-        throw new HttpException(err.message, 400)
-      })
+
   }
 
   @Post('/accept')
@@ -89,7 +83,7 @@ export class UserController {
     @Body(new ValidationPipe()) input: AcceptToken
   ): Promise<UserAccess> {
     return new Promise((resolve, reject) => {
-      this.cacheManager.get(input.id, (err: Error, res: string) => {
+      this.cacheManager.get(input.email, (err: Error, res: string) => {
         if (err) {
           reject(new NotFoundException(err.message))
           return
@@ -99,25 +93,14 @@ export class UserController {
           return
         }
 
-        const storeToken: AcceptToken = JSON.parse(res)
-        if (storeToken.acceptToken === input.acceptToken) {
-          return this.userservice
-            .update(input.id, { isActive: true })
-            .then(async () => {
-              const user = await this.userservice.readRaw({ id: input.id })
-              if (user) {
-                this.cacheManager.del(input.id)
-                resolve(this.userservice.toAccess(user))
-              } else {
-                reject(new HttpException('user not found', 400))
-                return
-              }
-            })
-            .catch((err) => {
-              console.log(err)
-              reject(new HttpException(err.message, 402))
-              return
-            })
+        const storedUser: CacheUser = JSON.parse(res)
+        if (storedUser.accept.acceptToken === input.acceptToken) {
+          const user = this.userservice.createOne(storedUser.payload)
+          .then( created => {
+            this.cacheManager.del(input.email)
+            resolve(this.userservice.toAccess(created))
+          })
+          .catch( err => console.log(err))
         } else {
           reject(new HttpException('wrong access key', 400))
           return

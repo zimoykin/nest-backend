@@ -47,6 +47,11 @@ export class UserDto {
   }
 }
 
+export interface CacheUser {
+  accept: AcceptToken
+  payload: UserDto
+}
+
 export class UserOutputDto {
   username: string
   email: string
@@ -81,7 +86,7 @@ export interface UserAccess {
 export class AcceptToken {
   @IsString()
   @IsNotEmpty()
-  id: string
+  email: string
   @IsString()
   @IsNotEmpty()
   acceptToken: string

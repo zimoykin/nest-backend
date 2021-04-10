@@ -6,21 +6,15 @@ import { User } from '../../_MODEL/user.entity'
 export class Mail {
   constructor(private readonly mailerService: MailerService) {}
 
-  sendMail(user: User, subject: string, body: string) {
-    this.mailerService
+  sendMail(email: string , subject: string, body: string): Promise<string> {
+    return this.mailerService
       .sendMail({
-        to: user.email,
+        to: email,
         from: process.env.MAIL_LOGIN,
         subject: subject,
         sender: process.env.MAIL_LOGIN,
         //TODO: html form for this
         html: '<h3>Hello! Company LLC </h3>' + '<hr>' + body
-      })
-      .then(() => {
-        console.log('success')
-      })
-      .catch((err) => {
-        console.log(err)
       })
   }
 }

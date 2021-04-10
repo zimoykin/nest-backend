@@ -3,6 +3,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  NotFoundException,
   Param,
   Post,
   Req,
@@ -15,6 +16,7 @@ import { createReadStream } from 'fs'
 import { diskStorage } from 'multer'
 import { FileService } from '../_SERVICES/file/file.service'
 import { Stream } from 'stream'
+import * as fs from 'fs'
 
 @Controller('api/file')
 export class FileController {
@@ -46,8 +48,13 @@ export class FileController {
     @Param('filename') filename: string,
     @Res() res
   ): Promise<Stream> {
-    let fileStream = createReadStream(`uploads/files/${filename}`)
-    //res.contentType('application/jpg');
-    return fileStream.pipe(res)
+
+    let path = `uploads/files/${filename}`
+
+    if (fs.existsSync(path)) {
+        let fileStream = createReadStream(path)
+        //res.contentType('application/jpg');
+        return fileStream.pipe(res)
+    } else throw new NotFoundException('file not found')
   }
 }

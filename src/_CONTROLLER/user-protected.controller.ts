@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Controller,
   Post,
   Req,
@@ -33,7 +34,11 @@ export class UserProtectedController extends RestController(UsersService) {
     })
   )
   async upload(@UploadedFile() file, @Req() req: any) {
-    console.log(file)
-    this.service.update(req.user.id, { photo: file.filename })
+    return this.service.update(req.user.id, { photo: file.filename })
+    .then( res => { return {created: res} })
+    .catch( err => { 
+      console.log(err)
+      throw new BadRequestException(err.message)
+    })
   }
 }

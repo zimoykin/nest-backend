@@ -1,6 +1,6 @@
 import {
   Controller,
-    Get,
+  Get,
   HttpCode,
   HttpStatus,
   Param,
@@ -11,36 +11,43 @@ import {
   UseInterceptors,
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express/multer'
-import { createReadStream } from 'fs';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { createReadStream } from 'fs'
+import { diskStorage } from 'multer'
+import { FileService } from '../_SERVICES/file/file.service'
 import { Stream } from 'stream'
 
 @Controller('api/file')
 export class FileController {
-    
-  @Post()
+  constructor(private service: FileService) {}
+
+  @Post(':holder')
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(
     FileInterceptor('file', {
-        storage: diskStorage({
-          destination: './uploads/files',
-          filename: (_, file, cb) => {
-            cb(null, file.originalname)
-          },
-        }),
-      })
+      storage: diskStorage({
+        destination: './uploads/files',
+        filename: (_, file, cb) => {
+          cb(null, file.originalname)
+        },
+      }),
+    })
   )
-  async createFile(@Req() req, @UploadedFile('file') file): Promise<string> {
-    return 'done!'
+  async createFile(
+    @Param('holder') param,
+    @Req() req,
+    @UploadedFile('file') file
+  ): Promise<string> {
+    return this.service.create(req.user, param, file.originalname)
   }
 
   @Get(':filename')
   @HttpCode(HttpStatus.OK)
-  async sendFile(@Param('filename') filename: string, @Res() res): Promise<Stream> {
+  async sendFile(
+    @Param('filename') filename: string,
+    @Res() res
+  ): Promise<Stream> {
     let fileStream = createReadStream(`uploads/files/${filename}`)
     //res.contentType('application/jpg');
     return fileStream.pipe(res)
   }
-
 }

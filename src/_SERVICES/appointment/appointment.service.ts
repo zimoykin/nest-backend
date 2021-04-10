@@ -57,7 +57,7 @@ export class AppointmentService extends ModelService(
     return (await getRepository(Appointment).save(meet)).output()
   }
 
-  async readMy(user: User): Promise<any> {
+  async readMy(user: User):Promise<any> {
     return this.repository
       .createQueryBuilder('meet')
       .select('meet.id')

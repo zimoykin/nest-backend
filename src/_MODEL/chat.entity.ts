@@ -18,13 +18,13 @@ import { Folder } from './folder.entity'
 @Entity('chat')
 export class Chat implements ApiModel {
   hasOwner = false
-  static relations = ['users', 'admin', 'folder']
+  static relations = ['users', 'admin', 'folder', 'folder.user']
 
   output(): any {
     return {
       id: this.id,
       title: this.title,
-      folder: this.folder.shortoutput(),
+      folder: (this.folder ? this.folder.shortoutput():''),
       settings: this.settings,
       admin: this.admin.shortoutput(),
       users: this.users.map((val) => {

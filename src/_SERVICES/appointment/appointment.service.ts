@@ -5,6 +5,7 @@ import { Brackets, getRepository } from 'typeorm'
 import { Appointment } from '../../_MODEL/appointment.entity'
 import { ModelService } from '../DefaultService/default.service'
 import { UserDto } from '../../_MODEL/_DTO/user.dto'
+import { File } from '../../_MODEL/file.entity'
 
 @Injectable()
 export class AppointmentService extends ModelService(
@@ -82,6 +83,7 @@ export class AppointmentService extends ModelService(
           .distinct()
           .leftJoinAndSelect('meet.owner', 'owner')
           .leftJoinAndSelect('meet.members', 'members')
+          .leftJoinAndSelect('meet.files', 'files','meet.id = files.holder')
           .where('meet.id In(:...ids)', {
             ids: [null].concat(vals.map((v) => v.meet_id)),
           })

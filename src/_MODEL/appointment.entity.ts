@@ -6,17 +6,19 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
 import { ApiModel } from './apimodel'
+import { File } from './file.entity'
 import { Room } from './room.entity'
 import { User } from './user.entity'
 
 @Entity('appointment')
 export class Appointment implements ApiModel {
   hasOwner = true
-  static relations = ['owner', 'members', 'room']
+  static relations = ['owner', 'members', 'room', 'files']
 
   output() {
     return {
@@ -24,8 +26,9 @@ export class Appointment implements ApiModel {
       title: this.title,
       owner: this.owner.shortoutput(),
       isOnline: this.isOnline,
+      files: this.files.map(fl =>fl.shortoutput()),
       duration: this.duration,
-      members: this.members.map((user) => user.shortoutput()),
+      members: this.members.map(user => user.shortoutput()),
       result: this.result,
       appointmentTime: this.appointmentTime,
     }
@@ -76,6 +79,9 @@ export class Appointment implements ApiModel {
   @ManyToOne(() => Room, (room) => room, { nullable: false })
   @JoinColumn({ name: 'room_id' })
   room: Room
+
+  @OneToMany(() => File, (file) => file.holder)
+  files: File[]
 
   @ManyToMany(() => User, (user) => user.appointments, { cascade: false })
   @JoinTable({

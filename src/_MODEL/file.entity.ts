@@ -5,16 +5,19 @@ import {
     JoinColumn,
     ManyToOne,
     PrimaryGeneratedColumn,
+    Unique,
     UpdateDateColumn,
   } from 'typeorm'
   import { ApiModel } from './apimodel'
+import { Appointment } from './appointment.entity'
   import { User } from './user.entity'
   
   @Entity('file')
+  @Unique(['title', 'user'])
   export class File implements ApiModel {
     hasOwner = true
   
-    static relations = []
+    static relations = ['user']
   
     output(): any {
       return {
@@ -40,11 +43,12 @@ import {
     @Column()
     extension: string
 
-    @Column({name: 'holder'})
+    @ManyToOne(() => Appointment, (meet) => meet)
+    @Column('uuid', {name: 'holder'})
     holder: string
 
-    @ManyToOne(() => User, (user) => user)
-    @JoinColumn({ name: 'UserId' })
+    @ManyToOne(() => User, (user) => user,  { nullable: false })
+    @JoinColumn({ name: 'user_id' })
     user: User
 
     @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })

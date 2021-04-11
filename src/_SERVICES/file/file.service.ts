@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../../_MODEL/user.entity'
-import { getRepository } from 'typeorm'
+import { Brackets, getRepository } from 'typeorm'
 import { File } from '../../_MODEL/file.entity'
 import { extname } from 'path'
 
@@ -27,5 +27,21 @@ export class FileService {
         .then((val) => resolve(val.id))
         .catch((err) => reject(err))
     })
+  }
+  getList(user: User):Promise<File[]> {
+     return this.repository.find({where: {user: user}, relations: File.relations})
+     .then( vals => vals.map (val => val.output()))
+  }
+  async getFile(user:User, filename: string): Promise<File> {
+      return this.repository
+      .createQueryBuilder('file')
+      .leftJoin('file.holder', 'meet')
+      .leftJoin('meet.members', 'users')
+      .where( new Brackets (qb =>{
+        qb.where('users.id = :userId', { userId: user.id })
+        qb.orWhere('file.user_id = :userId', { userId: user.id })
+      }))
+      .andWhere('file.title = :filename', {filename: filename})
+      .getOne()
   }
 }

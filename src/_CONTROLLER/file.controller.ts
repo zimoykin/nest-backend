@@ -1,5 +1,6 @@
 import {
   Controller,
+    ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
@@ -46,15 +47,25 @@ export class FileController {
   @HttpCode(HttpStatus.OK)
   async sendFile(
     @Param('filename') filename: string,
-    @Res() res
+    @Res() res,
+    @Req() req
   ): Promise<Stream> {
 
-    let path = `uploads/files/${filename}`
+    let file = await this.service.getFile(req.user, filename)
+    if (!file) throw new ForbiddenException('')
+
+    let path = `uploads/files/${file.title}`
 
     if (fs.existsSync(path)) {
         let fileStream = createReadStream(path)
-        //res.contentType('application/jpg');
         return fileStream.pipe(res)
     } else throw new NotFoundException('file not found')
   }
+
+  @Get('')
+  @HttpCode(HttpStatus.OK)
+  async list(@Req() req: any) {
+      return this.service.getList(req.user)
+  }
+
 }

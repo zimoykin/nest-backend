@@ -62,7 +62,7 @@ export class UsersService extends ModelService(User, User.relations) {
     const access: UserAccess = {
       id: user.id,
       accessToken: jwt.sign({ id: user.id }, JWTSECRET, { expiresIn: '1h' }),
-      refreshToken: jwt.sign({ id: user.id }, JWTSECRET, { expiresIn: '72h' }),
+      refreshToken: jwt.sign( {}, JWTSECRET, { expiresIn: '72h' }),
     }
 
     return this.update(user.id, { refreshToken: access.refreshToken }).then(
@@ -87,7 +87,7 @@ export class UsersService extends ModelService(User, User.relations) {
           console.log(err)
           reject(err)
         } else {
-          const user = await this.readRaw({ id: payload.id, isActive: true })
+          const user = await this.readRaw({refreshToken: ref, isActive: true})
           if (!user) {
             reject('user not found')
             return

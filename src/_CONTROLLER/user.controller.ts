@@ -59,23 +59,25 @@ export class UserController {
     //check user before
     const userExist = await this.userservice.readRaw({ email: payload.email })
     if (userExist)
-    throw new ConflictException(
-      'this email address has been registered early.'
-    )
+      throw new ConflictException(
+        'this email address has been registered early.'
+      )
     const accept = this.userservice.toAccept(payload)
-    const cachedUser: CacheUser = { accept: accept, payload: payload}
+    const cachedUser: CacheUser = { accept: accept, payload: payload }
     return this.cacheManager
-          .set(payload.email, JSON.stringify(cachedUser))
-          .then( () => {
-            return this.mail.sendMail(payload.email, 'accept your account', accept.acceptToken)
-            .then ( () => accept)
-            .catch( err => { throw new HttpException(err.message, 404)})
-          })
+      .set(payload.email, JSON.stringify(cachedUser))
+      .then(() => {
+        return this.mail
+          .sendMail(payload.email, 'accept your account', accept.acceptToken)
+          .then(() => accept)
           .catch((err) => {
-            console.log(err)
-            throw new HttpException(err.message, 400)
+            throw new HttpException(err.message, 404)
           })
-
+      })
+      .catch((err) => {
+        console.log(err)
+        throw new HttpException(err.message, 400)
+      })
   }
 
   @Post('/accept')
@@ -95,12 +97,13 @@ export class UserController {
 
         const storedUser: CacheUser = JSON.parse(res)
         if (storedUser.accept.acceptToken === input.acceptToken) {
-          const user = this.userservice.createOne(storedUser.payload)
-          .then( created => {
-            this.cacheManager.del(input.email)
-            resolve(this.userservice.toAccess(created))
-          })
-          .catch( err => console.log(err))
+          const user = this.userservice
+            .createOne(storedUser.payload)
+            .then((created) => {
+              this.cacheManager.del(input.email)
+              resolve(this.userservice.toAccess(created))
+            })
+            .catch((err) => console.log(err))
         } else {
           reject(new HttpException('wrong access key', 400))
           return

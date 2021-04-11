@@ -30,21 +30,21 @@ export function RestController<T>(entity: Constructor<T>): Type<Crud<T>> {
       return this.service.readAll(query)
     }
     @HttpCode(HttpStatus.OK)
-    @Patch(':id') patch(
-      @Param('id') id: string,
-      @Body() input: any
-    ): Promise<T> {
+    @Patch(':id')
+    patch(@Param('id') id: string, @Body() input: any): Promise<T> {
       return this.service.update(id, input)
     }
     @HttpCode(HttpStatus.OK)
-    @Post() create(
+    @Post()
+    create(
       @Body(new ValidationPipe()) input: any,
       @Req() req: any
     ): Promise<T> {
       return this.service.create(input, req.user)
     }
     @HttpCode(HttpStatus.OK)
-    @Delete(':id') delete(@Param('id') id: string): Promise<string> {
+    @Delete(':id')
+    delete(@Param('id') id: string): Promise<string> {
       return this.service.delete(id)
     }
   }

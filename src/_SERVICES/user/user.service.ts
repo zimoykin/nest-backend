@@ -62,7 +62,7 @@ export class UsersService extends ModelService(User, User.relations) {
     const access: UserAccess = {
       id: user.id,
       accessToken: jwt.sign({ id: user.id }, JWTSECRET, { expiresIn: '1h' }),
-      refreshToken: jwt.sign( {}, JWTSECRET, { expiresIn: '72h' }),
+      refreshToken: jwt.sign({}, JWTSECRET, { expiresIn: '72h' }),
     }
 
     return this.update(user.id, { refreshToken: access.refreshToken }).then(
@@ -75,19 +75,20 @@ export class UsersService extends ModelService(User, User.relations) {
   toAccept(payload: UserDto): AcceptToken {
     return {
       email: payload.email,
-      acceptToken: jwt.sign({ email: payload.email }, JWTSECRET, { expiresIn: '5m' }),
+      acceptToken: jwt.sign({ email: payload.email }, JWTSECRET, {
+        expiresIn: '5m',
+      }),
     }
   }
 
   async checkRefToken(ref: string): Promise<User> {
-
     return new Promise((resolve, reject) => {
       jwt.verify(ref, JWTSECRET, async (err, payload: any) => {
         if (err) {
           console.log(err)
           reject(err)
         } else {
-          const user = await this.readRaw({refreshToken: ref, isActive: true})
+          const user = await this.readRaw({ refreshToken: ref, isActive: true })
           if (!user) {
             reject('user not found')
             return

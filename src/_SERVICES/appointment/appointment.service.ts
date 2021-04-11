@@ -58,7 +58,7 @@ export class AppointmentService extends ModelService(
     return (await getRepository(Appointment).save(meet)).output()
   }
 
-  async readMy(user: User):Promise<any> {
+  async readMy(user: User): Promise<any> {
     return this.repository
       .createQueryBuilder('meet')
       .select('meet.id')
@@ -83,7 +83,7 @@ export class AppointmentService extends ModelService(
           .distinct()
           .leftJoinAndSelect('meet.owner', 'owner')
           .leftJoinAndSelect('meet.members', 'members')
-          .leftJoinAndSelect('meet.files', 'files','meet.id = files.holder')
+          .leftJoinAndSelect('meet.files', 'files', 'meet.id = files.holder')
           .where('meet.id In(:...ids)', {
             ids: [null].concat(vals.map((v) => v.meet_id)),
           })

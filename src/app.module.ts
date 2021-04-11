@@ -18,8 +18,8 @@ import { ScheduleModule } from '@nestjs/schedule'
 import { AppointmentModule } from './_SERVICES/appointment/appointment.module'
 import { RoomModule } from './_SERVICES/room/room.module'
 import { Mail } from './_SERVICES/mail/mail.service'
-import { MailModule } from './_SERVICES/mail/mail.module';
-import { FileModule } from './_SERVICES/file/file.module';
+import { MailModule } from './_SERVICES/mail/mail.module'
+import { FileModule } from './_SERVICES/file/file.module'
 
 const modules = [
   TypeOrmModule.forRoot(config),
@@ -30,7 +30,7 @@ const modules = [
   ChatModule,
   MessageModule,
   AppointmentModule,
-  MailModule, 
+  MailModule,
   FileModule,
   ScheduleModule.forRoot(),
   ServeStaticModule.forRoot({

@@ -26,9 +26,9 @@ export class Appointment implements ApiModel {
       title: this.title,
       owner: this.owner.shortoutput(),
       isOnline: this.isOnline,
-      files: this.files.map(fl =>fl.shortoutput()),
+      files: this.files.map((fl) => fl.shortoutput()),
       duration: this.duration,
-      members: this.members.map(user => user.shortoutput()),
+      members: this.members.map((user) => user.shortoutput()),
       result: this.result,
       appointmentTime: this.appointmentTime,
     }

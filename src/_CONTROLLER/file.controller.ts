@@ -1,6 +1,7 @@
 import {
   Controller,
-    ForbiddenException,
+  Delete,
+  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
@@ -50,22 +51,25 @@ export class FileController {
     @Res() res,
     @Req() req
   ): Promise<Stream> {
-
-    let file = await this.service.getFile(req.user, filename)
+    const file = await this.service.getFile(req.user, filename)
     if (!file) throw new ForbiddenException('')
 
-    let path = `uploads/files/${file.title}`
+    const path = `uploads/files/${file.title}`
 
     if (fs.existsSync(path)) {
-        let fileStream = createReadStream(path)
-        return fileStream.pipe(res)
+      return createReadStream(path).pipe(res)
     } else throw new NotFoundException('file not found')
   }
 
   @Get('')
   @HttpCode(HttpStatus.OK)
   async list(@Req() req: any) {
-      return this.service.getList(req.user)
+    return this.service.getList(req.user)
   }
 
+  @Delete(':id')
+  @HttpCode(HttpStatus.OK)
+  async delete(@Req() req: any, @Param('id') id: string): Promise<any> {
+    return this.service.delete(id, req.user)
+  }
 }

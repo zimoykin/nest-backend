@@ -29,17 +29,17 @@ export class Chat implements ApiModel {
       admin: this.admin.shortoutput(),
       users: this.users.map((val) => {
         return val.shortoutput()
-      }),
+      })
     }
   }
   shortoutput(): any {
     return {
       id: this.id,
       title: this.title,
-      folder: this.folder.shortoutput(),
+      folder: (this.folder ? this.folder.shortoutput():''),
       users: this.users.map((val) => {
         return val.shortoutput()
-      }),
+      })
     }
   }
 

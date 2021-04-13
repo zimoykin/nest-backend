@@ -22,8 +22,10 @@ import { ServerError } from '../_UTILS/errors/ResponseError'
 import { NetwortError } from '../_UTILS/enums/networkError'
 import { Cache } from 'cache-manager'
 import { Mail } from '../_SERVICES/mail/mail.service'
+import { ApiBasicAuth, ApiTags } from '@nestjs/swagger'
 
 @Controller('api')
+@ApiTags('user')
 export class UserController {
   constructor(
     private userservice: UsersService,
@@ -31,6 +33,7 @@ export class UserController {
     @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {}
 
+  @ApiBasicAuth()
   @Post('/login')
   async login(@Body() userdto: UserDto) {
     const access = await this.userservice.login(userdto.email, userdto.password)

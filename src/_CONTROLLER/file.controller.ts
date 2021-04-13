@@ -19,7 +19,10 @@ import { diskStorage } from 'multer'
 import { FileService } from '../_SERVICES/file/file.service'
 import { Stream } from 'stream'
 import * as fs from 'fs'
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 
+@ApiTags('fileserver')
+@ApiBearerAuth()
 @Controller('api/file')
 export class FileController {
   constructor(private service: FileService) {}

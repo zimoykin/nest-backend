@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core'
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { exec } from 'child_process'
 import { config } from '../ormconfig'
 import { AppModule } from './app.module'
@@ -10,6 +11,16 @@ async function bootstrap() {
   app.enableCors()
   //app.setGlobalPrefix('api');
   //app.useGlobalPipes(new ValidationPipe());
+
+  const options = new DocumentBuilder()
+    .setTitle('Api help')
+    .setDescription('API description')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('api/docs', app, document);
+
   await app.listen(3000).then(() => {
     console.log('server started')
     if (migrate) {

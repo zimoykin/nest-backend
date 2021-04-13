@@ -7,17 +7,21 @@ import {
   UseInterceptors,
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express/multer'
+import { ApiBearerAuth, ApiOperation, ApiTags} from '@nestjs/swagger'
 import { diskStorage } from 'multer'
 import { extname } from 'path'
 import { UsersService } from '../_SERVICES/user/user.service'
 import { RestController } from './rest.controller'
 
+@ApiTags('user')
 @Controller('api/user')
 export class UserProtectedController extends RestController(UsersService) {
   constructor(public service: UsersService) {
     super()
   }
 
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'upload file for user avatar'})
   @Post('avatar')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -45,3 +49,4 @@ export class UserProtectedController extends RestController(UsersService) {
       })
   }
 }
+

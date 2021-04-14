@@ -9,6 +9,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express/multer'
 import { ApiBearerAuth, ApiOperation, ApiTags} from '@nestjs/swagger'
 import { diskStorage } from 'multer'
+import { dirname } from 'node:path'
 import { extname } from 'path'
 import { UsersService } from '../_SERVICES/user/user.service'
 import { RestController } from './rest.controller'
@@ -26,8 +27,8 @@ export class UserProtectedController extends RestController(UsersService) {
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: './uploads/photos',
-        filename: (req, file, cb) => {
+        destination: process.cwd() + '/uploads/photos',
+        filename: (_, file, cb) => {
           const randomName = Array(32)
             .fill(null)
             .map(() => Math.round(Math.random() * 16).toString(16))

@@ -19,7 +19,9 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('api/docs', app, document);
+  SwaggerModule.setup('api/docs', app, document)
+
+  
 
   await app.listen(3000).then(() => {
     console.log('server started')
